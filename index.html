@@ -8,9 +8,25 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;padding:0}
 
-  #app{padding:12px;max-width:1100px;margin:0 auto}
+  #personel-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+  .personel-card{background:#fff;border-radius:16px;padding:2rem;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.12);text-align:center}
+  .personel-card h2{font-size:22px;font-weight:600;color:#111;margin-bottom:6px}
+  .personel-card p{font-size:14px;color:#6b7280;margin-bottom:1.25rem}
+  .personel-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+  .personel-btn{padding:12px;border:1.5px solid #e5e7eb;border-radius:10px;background:#f9fafb;font-size:15px;font-weight:500;cursor:pointer;color:#374151;transition:all .15s}
+  .personel-btn:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+  .personel-divider{font-size:12px;color:#9ca3af;margin:12px 0;position:relative}
+  .personel-divider::before,.personel-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:#e5e7eb}
+  .personel-divider::before{left:0}.personel-divider::after{right:0}
+  .personel-card input{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;margin-bottom:10px;transition:border-color .2s;color:#111}
+  .personel-card input:focus{border-color:#2563eb}
+  .personel-card .btn-giris{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+  .personel-card .btn-giris:active{transform:scale(0.98)}
+
+  #app{display:none;padding:12px;max-width:1100px;margin:0 auto}
   .header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
   .header h1{font-size:17px;font-weight:600;color:#1a1a1a}
+  .header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .stats{display:flex;gap:6px;flex-wrap:wrap}
   .stat{background:#f3f4f6;border-radius:8px;padding:5px 10px;font-size:12px;color:#6b7280}
   .stat span{font-weight:600;color:#111}
@@ -18,6 +34,8 @@
   .stat.red span{color:#dc2626}
   .online-badge{font-size:11px;background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:20px;font-weight:500}
   .online-badge.offline{background:#fef3c7;color:#92400e}
+  .personel-badge{background:#eff6ff;color:#1d4ed8;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:500;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:4px}
+  .personel-badge:hover{background:#dbeafe}
 
   .search-row{display:flex;gap:8px;margin-bottom:10px}
   .search-row input{flex:1;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;background:#fff;transition:border-color .2s}
@@ -28,10 +46,7 @@
   .legend{display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap;padding:0 2px}
   .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:#6b7280}
   .dot{width:12px;height:12px;border-radius:3px}
-  .dot.g{background:#16a34a}
-  .dot.r{background:#dc2626}
-  .dot.b{background:#2563eb}
-  .dot.o{background:#d97706}
+  .dot.g{background:#16a34a}.dot.r{background:#dc2626}.dot.o{background:#d97706}
 
   .sea{background:#bfdbfe;border-radius:10px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1e3a5f;font-weight:600;letter-spacing:.08em;margin-bottom:10px}
 
@@ -46,50 +61,34 @@
   .sb:active{transform:scale(0.88)}
   .sb.free{background:#16a34a;border-color:#14532d;color:#fff}
   .sb.busy{background:#dc2626;border-color:#991b1b;color:#fff}
+  .sb.busy-cift{background:#dc2626;border-color:#991b1b;color:#fff;outline:3px solid #fbbf24;outline-offset:1px}
   .sb.expiring{background:#d97706;border-color:#92400e;color:#fff}
   .sb.expired{background:#6b7280;border-color:#4b5563;color:#fff}
   .sb.dim{opacity:.2;pointer-events:none}
 
-  /* MODAL */
-  .modal-overlay{
-    display:none;
-    position:fixed;top:0;left:0;right:0;bottom:0;
-    background:rgba(0,0,0,0.5);
-    z-index:1000;
-    align-items:center;
-    justify-content:center;
-    padding:16px;
-  }
+  .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:16px}
   .modal-overlay.open{display:flex}
-  .modal{
-    background:#fff;
-    border-radius:16px;
-    width:100%;
-    max-width:420px;
-    max-height:90vh;
-    overflow-y:auto;
-    box-shadow:0 8px 40px rgba(0,0,0,0.2);
-    animation:popIn .2s ease;
-  }
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);animation:popIn .2s ease}
   @keyframes popIn{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
-  .modal-head{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:16px 18px 12px;
-    border-bottom:1px solid #f3f4f6;
-    position:sticky;top:0;background:#fff;border-radius:16px 16px 0 0;z-index:1;
-  }
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid #f3f4f6;position:sticky;top:0;background:#fff;border-radius:16px 16px 0 0;z-index:1}
   .modal-head h2{font-size:16px;font-weight:600;color:#111}
   .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;line-height:1;padding:0 4px;border-radius:6px}
   .modal-close:hover{background:#f3f4f6;color:#374151}
   .modal-body{padding:16px 18px 20px}
 
+  .tip-row{display:flex;gap:8px;margin-bottom:12px}
+  .tip-btn{flex:1;padding:10px;border-radius:9px;border:2px solid #e5e7eb;background:#f9fafb;font-size:14px;font-weight:600;cursor:pointer;color:#374151;transition:all .15s}
+  .tip-btn.active{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+  .tip-btn:disabled{opacity:.4;cursor:not-allowed}
+
   .info-chips{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
   .chip{background:#f3f4f6;border-radius:8px;padding:6px 10px;font-size:12px;color:#374151}
-  .chip strong{display:block;font-size:14px;color:#111;margin-top:1px}
-  .chip.warn{background:#fef3c7;color:#92400e}
-  .chip.warn strong{color:#92400e}
-  .chip.danger{background:#fee2e2;color:#991b1b}
-  .chip.danger strong{color:#991b1b}
+  .chip small{display:block;font-size:10px;color:#9ca3af;margin-bottom:1px}
+  .chip strong{display:block;font-size:13px;color:#111}
+  .chip.warn{background:#fef3c7;color:#92400e}.chip.warn strong{color:#92400e}
+  .chip.danger{background:#fee2e2;color:#991b1b}.chip.danger strong{color:#991b1b}
+  .chip.blue{background:#eff6ff;color:#1d4ed8}.chip.blue strong{color:#1d4ed8}
+  .chip.purple{background:#f5f3ff;color:#6d28d9}.chip.purple strong{color:#6d28d9}
   .note-box{background:#fefce8;border:1px solid #fef08a;border-radius:8px;padding:8px 10px;font-size:13px;color:#713f12;margin-bottom:12px}
   label.fl{font-size:12px;font-weight:500;color:#6b7280;display:block;margin-bottom:4px}
   input.fi,textarea.fi{width:100%;padding:9px 11px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;background:#fff;transition:border-color .2s;color:#111}
@@ -112,38 +111,51 @@
 </head>
 <body>
 
+<div id="personel-screen">
+  <div class="personel-card">
+    <div style="font-size:36px;margin-bottom:8px">🏖️</div>
+    <h2>Beach Rezervasyon</h2>
+    <p>Devam etmek için adınızı seçin veya girin</p>
+    <div class="personel-list" id="personel-list"></div>
+    <div class="personel-divider">veya yeni isim</div>
+    <input type="text" id="personel-input" placeholder="Adınızı yazın..." maxlength="40"
+      onkeydown="if(event.key==='Enter')personelGiris()">
+    <button class="btn-giris" onclick="personelGiris()">Giriş Yap →</button>
+  </div>
+</div>
+
 <div id="app">
   <div class="header">
     <h1>🏖️ Beach Rezervasyon</h1>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <div class="header-right">
       <div class="stats">
         <div class="stat green">Boş: <span id="s-free">98</span></div>
         <div class="stat red">Dolu: <span id="s-busy">0</span></div>
         <div class="stat">%<span id="s-pct">0</span></div>
       </div>
       <div class="online-badge" id="online-badge"><span class="sync-dot"></span>Canlı</div>
+      <button class="personel-badge" id="personel-badge" onclick="cikisYap()" title="Çıkış yap">
+        👤 <span id="personel-adi">—</span> ✕
+      </button>
     </div>
   </div>
-
   <div class="search-row">
     <input type="text" id="search" placeholder="İsim ara..." oninput="doSearch(this.value)">
     <button class="btn-sm" onclick="clearSearch()">Temizle</button>
     <button class="btn-sm" onclick="resetDay()">🔄 Gün sonu</button>
   </div>
-
   <div class="legend">
     <div class="leg"><div class="dot g"></div>Boş</div>
     <div class="leg"><div class="dot r"></div>Dolu</div>
+    <div class="leg"><div class="dot" style="background:#dc2626;outline:2px solid #fbbf24;outline-offset:1px;border-radius:3px"></div>Çift rezerve</div>
     <div class="leg"><div class="dot o"></div>Son 2 gün</div>
     <div class="leg"><div class="dot" style="background:#9ca3af"></div>Süresi doldu</div>
     <div class="leg">☂️ Şemsiye</div>
   </div>
-
   <div class="sea">~ DENİZ ~</div>
   <div class="beach-rows" id="beach-rows"></div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="overlayClick(event)">
   <div class="modal" id="modal">
     <div class="modal-head">
@@ -158,10 +170,8 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
 <script>
-const TOTAL=98, COLS=14, ROWS=7, UMBRELLAS=7;
-
+const TOTAL=98,COLS=14,ROWS=7,UMBRELLAS=7;
 const FIREBASE_CFG={
   apiKey:"AIzaSyBft4YofJC9iCtDMIOQwecIaneYOvotzGU",
   authDomain:"beach-rezervasyon.firebaseapp.com",
@@ -170,19 +180,55 @@ const FIREBASE_CFG={
 };
 
 let db=null;
-let state=Array.from({length:TOTAL},(_,i)=>({id:i+1,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0}));
+let state=Array.from({length:TOTAL},(_,i)=>({id:i+1,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',ciftGrup:''}));
 let searchVal='';
+let aktifPersonel='';
 
-function today(){
-  const d=new Date();
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+// Personel
+function getPersonelList(){try{const p=localStorage.getItem('beach_personeller');return p?JSON.parse(p):[]}catch(e){return[]}}
+function savePersonelList(l){try{localStorage.setItem('beach_personeller',JSON.stringify(l))}catch(e){}}
+function renderPersonelList(){
+  const list=getPersonelList();
+  const el=document.getElementById('personel-list');
+  el.innerHTML=list.length===0?'':list.map(p=>`<button class="personel-btn" onclick="secPersonel('${p.replace(/'/g,"\\'")}')" >👤 ${p}</button>`).join('');
+}
+function secPersonel(isim){
+  aktifPersonel=isim;
+  document.getElementById('personel-adi').textContent=isim;
+  document.getElementById('personel-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  initFirebase();
+}
+function personelGiris(){
+  const isim=document.getElementById('personel-input').value.trim();
+  if(!isim){alert('Lütfen adınızı girin!');return;}
+  const list=getPersonelList();
+  if(!list.includes(isim)){list.push(isim);savePersonelList(list);}
+  secPersonel(isim);
+}
+function cikisYap(){
+  if(!confirm('Çıkış yapılsın mı?'))return;
+  aktifPersonel='';
+  document.getElementById('app').style.display='none';
+  document.getElementById('personel-screen').style.display='flex';
+  document.getElementById('personel-input').value='';
+  renderPersonelList();closeModal();
 }
 
+// Çift şezlong hesabı — aynı şemsiye altındaki iki şezlong
+function ciftId(id){return id%2===1?id+1:id-1;}
+function ciftGecerli(id){
+  const cid=ciftId(id);
+  if(cid<1||cid>TOTAL)return false;
+  return Math.floor((id-1)/COLS)===Math.floor((cid-1)/COLS);
+}
+
+// Tarih
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function remainingDays(startDate,totalDays){
-  if(!startDate||!totalDays) return null;
-  const end=new Date(startDate);
-  end.setDate(end.getDate()+parseInt(totalDays));
-  const now=new Date(); now.setHours(0,0,0,0);
+  if(!startDate||!totalDays)return null;
+  const end=new Date(startDate);end.setDate(end.getDate()+parseInt(totalDays));
+  const now=new Date();now.setHours(0,0,0,0);
   return Math.ceil((end-now)/(1000*60*60*24));
 }
 
@@ -191,97 +237,107 @@ function sbClass(s){
   if(!s.busy){cls+='free';}
   else{
     const rem=remainingDays(s.startDate,s.days);
-    if(rem!==null&&rem<=0) cls+='expired';
-    else if(rem!==null&&rem<=2) cls+='expiring';
+    if(rem!==null&&rem<=0)cls+='expired';
+    else if(rem!==null&&rem<=2)cls+='expiring';
+    else if(s.tip==='cift')cls+='busy-cift';
     else cls+='busy';
   }
-  if(searchVal&&!s.name.toLowerCase().includes(searchVal.toLowerCase())) cls+=' dim';
+  if(searchVal&&!s.name.toLowerCase().includes(searchVal.toLowerCase()))cls+=' dim';
   return cls;
 }
-
 function daysBadge(s){
-  if(!s.busy||!s.days) return '';
+  if(!s.busy||!s.days)return'';
   const rem=remainingDays(s.startDate,s.days);
-  if(rem===null) return '';
-  if(rem<=0) return `<div class="sb-days" style="color:#6b7280">bitti</div>`;
-  if(rem<=2) return `<div class="sb-days" style="color:#d97706">${rem}g</div>`;
-  return `<div class="sb-days" style="color:#7f1d1d">${rem}g</div>`;
+  if(rem===null)return'';
+  if(rem<=0)return`<div class="sb-days">bitti</div>`;
+  return`<div class="sb-days">${rem}g</div>`;
 }
 
 function initFirebase(){
   try{
-    if(firebase.apps.length===0) firebase.initializeApp(FIREBASE_CFG);
+    if(firebase.apps.length===0)firebase.initializeApp(FIREBASE_CFG);
     db=firebase.database();
     db.ref('beach/sunbeds').on('value',snap=>{
       const data=snap.val();
-      if(data) Object.keys(data).forEach(k=>{const idx=parseInt(k)-1;if(idx>=0&&idx<TOTAL)state[idx]=data[k];});
+      if(data)Object.keys(data).forEach(k=>{const idx=parseInt(k)-1;if(idx>=0&&idx<TOTAL)state[idx]=data[k];});
       renderGrid();updateStats();setOnline(true);
     },()=>setOnline(false));
     db.ref('.info/connected').on('value',snap=>setOnline(snap.val()===true));
   }catch(e){toast('Firebase hatası: '+e.message);}
 }
-
 function setOnline(v){
   const b=document.getElementById('online-badge');
   b.className='online-badge'+(v?'':' offline');
   b.innerHTML=v?'<span class="sync-dot"></span>Canlı':'⚠️ Çevrimdışı';
 }
-
 function updateDB(id,data){if(db)db.ref('beach/sunbeds/'+id).set(data);}
-
 function updateStats(){
   const busy=state.filter(s=>s.busy).length;
   document.getElementById('s-free').textContent=TOTAL-busy;
   document.getElementById('s-busy').textContent=busy;
   document.getElementById('s-pct').textContent=Math.round(busy/TOTAL*100);
 }
-
 function sbEl(s){
-  return `<div class="${sbClass(s)}" title="${s.busy?(s.name||'Rezerveli'):'Boş'}" onclick="openModal(${s.id})">
+  return`<div class="${sbClass(s)}" title="${s.busy?(s.name+(s.tip==='cift'?' 👫':'')):'Boş'}" onclick="openModal(${s.id})">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l2-7h12l2 7"/><path d="M3 11h18v2H3z"/><path d="M7 13v7m10-7v7"/></svg>
     <div class="sb-num">#${s.id}</div>${daysBadge(s)}</div>`;
 }
-
 function renderGrid(){
   let html='';
   for(let row=0;row<ROWS;row++){
     html+=`<div class="beach-row">`;
     for(let u=0;u<UMBRELLAS;u++){
-      const li=row*COLS+u*2+1, ri=row*COLS+u*2+2;
+      const li=row*COLS+u*2+1,ri=row*COLS+u*2+2;
       html+=sbEl(state[li-1]);
       html+=`<div class="umbrella-sep">☂️</div>`;
       html+=sbEl(state[ri-1]);
-      if(u<UMBRELLAS-1) html+=`<div style="width:5px;flex-shrink:0"></div>`;
+      if(u<UMBRELLAS-1)html+=`<div style="width:5px;flex-shrink:0"></div>`;
     }
     html+=`</div>`;
   }
   document.getElementById('beach-rows').innerHTML=html;
 }
 
-/* ── MODAL ── */
+// Tek/çift seçimi
+function secTip(tip){
+  document.getElementById('f-tip').value=tip;
+  document.getElementById('btn-tek').className='tip-btn'+(tip==='tek'?' active':'');
+  document.getElementById('btn-cift').className='tip-btn'+(tip==='cift'?' active':'');
+}
+
 function openModal(id){
   const s=state[id-1];
   document.getElementById('modal-title').textContent='Şezlong #'+id;
   const body=document.getElementById('modal-body');
 
   if(!s.busy){
+    const cid=ciftId(id);
+    const ciftOk=ciftGecerli(id)&&!state[cid-1].busy;
+    const ciftDolu=ciftGecerli(id)&&state[cid-1].busy;
     body.innerHTML=`
       <label class="fl">Misafir adı *</label>
       <input class="fi" type="text" id="f-name" placeholder="Ad Soyad" maxlength="60">
       <label class="fl">Telefon</label>
       <input class="fi" type="tel" id="f-phone" placeholder="0555 000 00 00">
       <div class="form-row">
-        <div>
-          <label class="fl">Başlangıç tarihi</label>
-          <input class="fi" type="date" id="f-startDate" value="${today()}">
-        </div>
-        <div>
-          <label class="fl">Kaç gün?</label>
-          <input class="fi" type="number" id="f-days" placeholder="örn: 7" min="1" max="365">
-        </div>
+        <div><label class="fl">Başlangıç tarihi</label>
+        <input class="fi" type="date" id="f-startDate" value="${today()}"></div>
+        <div><label class="fl">Kaç gün?</label>
+        <input class="fi" type="number" id="f-days" placeholder="örn: 7" min="1" max="365"></div>
       </div>
+      <label class="fl">Rezerve tipi</label>
+      <div class="tip-row">
+        <button id="btn-tek" class="tip-btn active" onclick="secTip('tek')">👤 Tek kişi</button>
+        <button id="btn-cift" class="tip-btn" onclick="secTip('cift')" ${!ciftOk?'disabled':''}>
+          👫 Çift kişi ${ciftOk?'(#'+cid+' de)':ciftDolu?'(#'+cid+' dolu)':''}
+        </button>
+      </div>
+      <input type="hidden" id="f-tip" value="tek">
       <label class="fl">Not</label>
       <textarea class="fi" id="f-note" placeholder="Şemsiye, içecek, özel istek..."></textarea>
+      <div style="background:#eff6ff;border-radius:8px;padding:8px 10px;font-size:12px;color:#1d4ed8;margin-bottom:12px">
+        👤 İşlemi yapan: <strong>${esc(aktifPersonel)}</strong>
+      </div>
       <div class="btn-row">
         <button class="btn green" onclick="reserve(${id})">✓ Rezerve Et</button>
         <button class="btn gray" onclick="closeModal()">İptal</button>
@@ -292,23 +348,27 @@ function openModal(id){
     const endDate=s.startDate&&s.days?new Date(new Date(s.startDate).getTime()+s.days*86400000).toLocaleDateString('tr-TR'):'—';
     let remChip='';
     if(rem!==null){
-      if(rem<=0) remChip=`<div class="chip danger"><small>Süre</small><strong>Doldu!</strong></div>`;
-      else if(rem<=2) remChip=`<div class="chip warn"><small>Kalan</small><strong>${rem} gün ⚠️</strong></div>`;
+      if(rem<=0)remChip=`<div class="chip danger"><small>Süre</small><strong>Doldu!</strong></div>`;
+      else if(rem<=2)remChip=`<div class="chip warn"><small>Kalan</small><strong>${rem} gün ⚠️</strong></div>`;
       else remChip=`<div class="chip"><small>Kalan</small><strong>${rem} gün</strong></div>`;
     }
+    const cid=ciftId(id);
+    const isCift=s.tip==='cift'&&ciftGecerli(id);
     body.innerHTML=`
       <div class="info-chips">
         <div class="chip"><small>Misafir</small><strong>${esc(s.name||'—')}</strong></div>
+        ${s.tip?`<div class="chip ${isCift?'purple':''}"><small>Rezerve tipi</small><strong>${isCift?'👫 Çift (#'+cid+')':'👤 Tek'}</strong></div>`:''}
         ${s.phone?`<div class="chip"><small>Tel</small><strong>${esc(s.phone)}</strong></div>`:''}
         ${s.time?`<div class="chip"><small>Giriş</small><strong>${esc(s.time)}</strong></div>`:''}
         ${s.startDate?`<div class="chip"><small>Başlangıç</small><strong>${new Date(s.startDate).toLocaleDateString('tr-TR')}</strong></div>`:''}
         ${s.days?`<div class="chip"><small>Toplam</small><strong>${s.days} gün</strong></div>`:''}
         ${s.days?`<div class="chip"><small>Bitiş</small><strong>${endDate}</strong></div>`:''}
         ${remChip}
+        ${s.personel?`<div class="chip blue"><small>Kaydeden</small><strong>👤 ${esc(s.personel)}</strong></div>`:''}
       </div>
       ${s.note?`<div class="note-box">📝 ${esc(s.note)}</div>`:''}
       <div class="btn-row">
-        <button class="btn red" onclick="release(${id})">Boşalt</button>
+        <button class="btn red" onclick="release(${id})">${isCift?'👫 İkisini Boşalt':'Boşalt'}</button>
         <button class="btn gray" onclick="editModal(${id})">Düzenle</button>
       </div>`;
   }
@@ -323,53 +383,72 @@ function editModal(id){
     <label class="fl">Telefon</label>
     <input class="fi" type="tel" id="f-phone" value="${esc(s.phone)}">
     <div class="form-row">
-      <div>
-        <label class="fl">Başlangıç tarihi</label>
-        <input class="fi" type="date" id="f-startDate" value="${s.startDate||today()}">
-      </div>
-      <div>
-        <label class="fl">Kaç gün?</label>
-        <input class="fi" type="number" id="f-days" value="${s.days||''}" min="1" max="365">
-      </div>
+      <div><label class="fl">Başlangıç tarihi</label>
+      <input class="fi" type="date" id="f-startDate" value="${s.startDate||today()}"></div>
+      <div><label class="fl">Kaç gün?</label>
+      <input class="fi" type="number" id="f-days" value="${s.days||''}" min="1" max="365"></div>
     </div>
     <label class="fl">Not</label>
     <textarea class="fi" id="f-note">${esc(s.note)}</textarea>
+    <div style="background:#eff6ff;border-radius:8px;padding:8px 10px;font-size:12px;color:#1d4ed8;margin-bottom:12px">
+      👤 Düzenleyen: <strong>${esc(aktifPersonel)}</strong>
+    </div>
     <div class="btn-row">
       <button class="btn green" onclick="saveEdit(${id})">💾 Kaydet</button>
       <button class="btn gray" onclick="openModal(${id})">İptal</button>
     </div>`;
 }
 
-function closeModal(){
-  document.getElementById('modal-overlay').className='modal-overlay';
-}
-
-function overlayClick(e){
-  if(e.target===document.getElementById('modal-overlay')) closeModal();
-}
-
+function closeModal(){document.getElementById('modal-overlay').className='modal-overlay';}
+function overlayClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function makeRec(id,name,phone,note,startDate,days,tip,grup){
+  return{id,busy:true,name,phone,note,
+    time:new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}),
+    startDate,days,personel:aktifPersonel,
+    tarih:new Date().toLocaleDateString('tr-TR'),
+    tip,ciftGrup:grup};
+}
 
 function reserve(id){
   const name=document.getElementById('f-name').value.trim();
   if(!name){alert('Misafir adı zorunlu!');return;}
-  const rec={id,busy:true,name,
-    phone:document.getElementById('f-phone').value.trim(),
-    note:document.getElementById('f-note').value.trim(),
-    time:new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}),
-    startDate:document.getElementById('f-startDate').value,
-    days:parseInt(document.getElementById('f-days').value)||0};
+  const phone=document.getElementById('f-phone').value.trim();
+  const note=document.getElementById('f-note').value.trim();
+  const startDate=document.getElementById('f-startDate').value;
+  const days=parseInt(document.getElementById('f-days').value)||0;
+  const tip=document.getElementById('f-tip').value;
+  const cid=ciftId(id);
+  const grup=tip==='cift'?('g'+Date.now()):'';
+
+  const rec=makeRec(id,name,phone,note,startDate,days,tip,grup);
   state[id-1]=rec;updateDB(id,rec);
+
+  if(tip==='cift'&&ciftGecerli(id)&&!state[cid-1].busy){
+    const rec2=makeRec(cid,name,phone,note,startDate,days,'cift',grup);
+    state[cid-1]=rec2;updateDB(cid,rec2);
+    toast('✅ #'+id+' ve #'+cid+' rezerve (çift) — '+name);
+  } else {
+    toast('✅ #'+id+' rezerve — '+name+(days?' ('+days+' gün)':''));
+  }
   renderGrid();updateStats();closeModal();
-  toast('✅ #'+id+' rezerve — '+name+(rec.days?' ('+rec.days+' gün)':''));
 }
 
 function release(id){
-  if(!confirm('#'+id+' numaralı şezlong boşaltılsın mı?'))return;
-  const rec={id,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0};
-  state[id-1]=rec;updateDB(id,rec);
+  const s=state[id-1];
+  const cid=ciftId(id);
+  const isCift=s.tip==='cift'&&ciftGecerli(id)&&state[cid-1].busy&&state[cid-1].ciftGrup===s.ciftGrup&&s.ciftGrup;
+
+  const msg=isCift?`#${id} ve #${cid} şezlong (çift) boşaltılsın mı?`:`#${id} numaralı şezlong boşaltılsın mı?`;
+  if(!confirm(msg))return;
+
+  const empty=(xid)=>({id:xid,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',ciftGrup:''});
+  state[id-1]=empty(id);updateDB(id,state[id-1]);
+  if(isCift){state[cid-1]=empty(cid);updateDB(cid,state[cid-1]);}
+
   renderGrid();updateStats();closeModal();
-  toast('🟢 #'+id+' boşaltıldı');
+  toast(isCift?`🟢 #${id} ve #${cid} boşaltıldı`:`🟢 #${id} boşaltıldı`);
 }
 
 function saveEdit(id){
@@ -380,65 +459,44 @@ function saveEdit(id){
   s.note=document.getElementById('f-note').value.trim();
   s.startDate=document.getElementById('f-startDate').value;
   s.days=parseInt(document.getElementById('f-days').value)||0;
+  s.personel=aktifPersonel;s.tarih=new Date().toLocaleDateString('tr-TR');
   updateDB(id,s);renderGrid();updateStats();closeModal();
   toast('💾 #'+id+' güncellendi');
 }
 
 function doSearch(v){
   searchVal=v;renderGrid();
-  if(v){
-    const m=state.find(s=>s.name.toLowerCase().includes(v.toLowerCase()));
-    if(m) openModal(m.id);
-  }
+  if(v){const m=state.find(s=>s.name.toLowerCase().includes(v.toLowerCase()));if(m)openModal(m.id);}
 }
-
-function clearSearch(){
-  document.getElementById('search').value='';
-  searchVal='';renderGrid();
-}
+function clearSearch(){document.getElementById('search').value='';searchVal='';renderGrid();}
 
 function resetDay(){
-  // Günlük rezerve (days=0): temizlenecek
-  // Kalan günü olan aktif rezerveler: dokunulmayacak
-  // Süresi dolmuş (days>0 ama rem<=0): ayrı onay
-
-  const gunluk = state.filter(s=>s.busy && !s.days);
-  const suresiDolan = state.filter(s=>s.busy && s.days && remainingDays(s.startDate,s.days)<=0);
-  const aktif = state.filter(s=>s.busy && s.days && remainingDays(s.startDate,s.days)>0);
-
-  let msg = `GÜN SONU İŞLEMİ\n\n`;
-  msg += `✅ Günlük rezerve (temizlenecek): ${gunluk.length} şezlong\n`;
-  msg += `⏰ Süresi dolmuş (temizlenecek): ${suresiDolan.length} şezlong\n`;
-  msg += `🔒 Aktif rezerve (dokunulmayacak): ${aktif.length} şezlong\n\n`;
-  msg += `Devam edilsin mi?`;
-
-  if(!confirm(msg)) return;
-
-  const temizlenecek = [...gunluk, ...suresiDolan];
-  if(temizlenecek.length===0){
-    toast('Temizlenecek şezlong yok, aktif rezerveler korunuyor.');
-    return;
-  }
-
+  const gunluk=state.filter(s=>s.busy&&!s.days);
+  const suresiDolan=state.filter(s=>s.busy&&s.days&&remainingDays(s.startDate,s.days)<=0);
+  const aktif=state.filter(s=>s.busy&&s.days&&remainingDays(s.startDate,s.days)>0);
+  let msg=`GÜN SONU İŞLEMİ\n\n`;
+  msg+=`✅ Günlük rezerve (temizlenecek): ${gunluk.length} şezlong\n`;
+  msg+=`⏰ Süresi dolmuş (temizlenecek): ${suresiDolan.length} şezlong\n`;
+  msg+=`🔒 Aktif rezerve (dokunulmayacak): ${aktif.length} şezlong\n\nDevam edilsin mi?`;
+  if(!confirm(msg))return;
+  const temizlenecek=[...gunluk,...suresiDolan];
+  if(temizlenecek.length===0){toast('Temizlenecek şezlong yok.');return;}
   temizlenecek.forEach(s=>{
-    s.busy=false;s.name='';s.phone='';s.note='';s.time='';s.startDate='';s.days=0;
-    updateDB(s.id, s);
+    s.busy=false;s.name='';s.phone='';s.note='';s.time='';s.startDate='';s.days=0;s.personel='';s.tarih='';s.tip='';s.ciftGrup='';
+    updateDB(s.id,s);
   });
-
   renderGrid();updateStats();closeModal();
-  toast(`🔄 ${temizlenecek.length} şezlong temizlendi, ${aktif.length} rezerve korundu`);
+  toast(`🔄 ${temizlenecek.length} temizlendi, ${aktif.length} rezerve korundu`);
 }
 
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast show';
-  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2500);
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2800);
 }
 
-// ESC tuşu modalı kapat
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-
-window.addEventListener('load',initFirebase);
+window.addEventListener('load',renderPersonelList);
 </script>
 </body>
 </html>

@@ -213,8 +213,10 @@
           <th>Şezlong</th>
           <th>Misafir</th>
           <th>Telefon</th>
-          <th>Giriş</th>
-          <th>Çıkış</th>
+          <th>Giriş Tarihi</th>
+          <th>Giriş Saati</th>
+          <th>Çıkış Tarihi</th>
+          <th>Çıkış Saati</th>
           <th>Gün</th>
           <th>Tip</th>
           <th>Personel</th>
@@ -345,6 +347,7 @@ function upDB(id,data){if(db)db.ref('beach/sunbeds/'+id).set(data);}
 function addLog(islem,sb,misafir,phone,startDate,days,tip,note,cikisT){
   if(!db)return;
   const now=new Date();
+  const saat=now.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
   const log={
     ts:now.getTime(),
     tarihSaat:now.toLocaleString('tr-TR'),
@@ -353,7 +356,9 @@ function addLog(islem,sb,misafir,phone,startDate,days,tip,note,cikisT){
     misafir:misafir||'',
     telefon:phone||'',
     girisTarihi:startDate||'',
+    girisSaati:islem==='giris'?saat:'',
     cikisTarihi:cikisT||'',
+    cikisSaati:islem==='cikis'?saat:'',
     gun:days||0,
     tip:tip||'tek',
     personel:aktif,
@@ -620,7 +625,7 @@ function renderLog(logs){
   const tbody=document.getElementById('log-tbody');
   document.getElementById('log-count').textContent=`Toplam ${logs.length} kayıt`;
   if(!logs.length){
-    tbody.innerHTML=`<tr><td colspan="11" class="log-empty">Henüz kayıt yok</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="13" class="log-empty">Henüz kayıt yok</td></tr>`;
     return;
   }
   tbody.innerHTML=logs.map(l=>{
@@ -628,6 +633,8 @@ function renderLog(logs){
     const islemText={giris:'Giriş',cikis:'Çıkış',guncelle:'Güncelleme'}[l.islem]||l.islem;
     const girisStr=l.girisTarihi?new Date(l.girisTarihi+'T00:00:00').toLocaleDateString('tr-TR'):'—';
     const cikisStr=l.cikisTarihi?new Date(l.cikisTarihi+'T00:00:00').toLocaleDateString('tr-TR'):'—';
+    const girisSaatStr=l.girisSaati||'—';
+    const cikisSaatStr=l.cikisSaati||'—';
     return`<tr>
       <td style="white-space:nowrap">${esc(l.tarihSaat||'')}</td>
       <td><span class="log-badge ${islemBadge}">${islemText}</span></td>
@@ -635,7 +642,9 @@ function renderLog(logs){
       <td>${esc(l.misafir||'')}</td>
       <td>${esc(l.telefon||'')}</td>
       <td style="white-space:nowrap">${girisStr}</td>
+      <td style="white-space:nowrap">${girisSaatStr}</td>
       <td style="white-space:nowrap">${cikisStr}</td>
+      <td style="white-space:nowrap">${cikisSaatStr}</td>
       <td>${l.gun||'—'}</td>
       <td>${l.tip==='cift'?'👫 Çift':'👤 Tek'}</td>
       <td>${esc(l.personel||'')}</td>
@@ -655,7 +664,7 @@ function filterLog(){
 
 function exportCSV(){
   if(!allLogs.length){toast('İndirilecek kayıt yok.');return;}
-  const header=['Tarih/Saat','İşlem','Şezlong','Misafir','Telefon','Giriş Tarihi','Çıkış Tarihi','Gün Sayısı','Tip','Personel','Not'];
+  const header=['Tarih/Saat','İşlem','Şezlong','Misafir','Telefon','Giriş Tarihi','Giriş Saati','Çıkış Tarihi','Çıkış Saati','Gün Sayısı','Tip','Personel','Not'];
   const rows=allLogs.map(l=>[
     l.tarihSaat||'',
     {giris:'Giriş',cikis:'Çıkış',guncelle:'Güncelleme'}[l.islem]||l.islem,
@@ -663,7 +672,9 @@ function exportCSV(){
     l.misafir||'',
     l.telefon||'',
     l.girisTarihi||'',
+    l.girisSaati||'',
     l.cikisTarihi||'',
+    l.cikisSaati||'',
     l.gun||'',
     l.tip==='cift'?'Çift':'Tek',
     l.personel||'',

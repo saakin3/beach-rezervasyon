@@ -164,7 +164,7 @@
     <h1>🏖️ Beach Rezervasyon</h1>
     <div class="hright">
       <div class="stats">
-        <div class="stat g">Boş: <span id="s-free">98</span></div>
+        <div class="stat g">Boş: <span id="s-free">80</span></div>
         <div class="stat r">Dolu: <span id="s-busy">0</span></div>
         <div class="stat">%<span id="s-pct">0</span></div>
       </div>
@@ -196,6 +196,7 @@
     <h2>📋 Kayıt Defteri</h2>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="bsm" onclick="exportCSV()">⬇️ CSV İndir</button>
+      <button class="bsm" style="color:#dc2626;border-color:#fca5a5" onclick="tumLoglariSil()">🗑️ Tüm Kayıtları Sil</button>
       <button class="bsm" onclick="closeLog()">✕ Kapat</button>
     </div>
   </div>
@@ -244,7 +245,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
-const TOTAL=98,COLS=14,ROWS=7,UMB=7;
+const TOTAL=80,COLS=16,ROWS=5,UMB=8;
 const BASE_CFG={
   authDomain:"beach-rezervasyon.firebaseapp.com",
   databaseURL:"https://beach-rezervasyon-default-rtdb.firebaseio.com",
@@ -712,6 +713,16 @@ function exportCSV(){
   a.download='beach-kayitlar-'+today()+'.csv';
   a.click();
   toast('✅ CSV indirildi');
+}
+
+function tumLoglariSil(){
+  if(!allLogs.length){toast('Silinecek kayıt yok.');return;}
+  if(!confirm(`DİKKAT!\n\n${allLogs.length} kayıt KALICI olarak silinecek.\nBu işlem geri alınamaz.\n\nEmin misiniz?`))return;
+  if(!confirm('Son onay: Tüm kayıt defteri silinsin mi?'))return;
+  if(db) db.ref('beach/logs').remove();
+  allLogs=[];
+  renderLog([]);
+  toast('🗑️ Tüm kayıtlar silindi');
 }
 
 function toast(msg){

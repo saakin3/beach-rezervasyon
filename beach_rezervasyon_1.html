@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Beach Rezervasyon</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;padding:0}
+
+  #setup-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+  .setup-card{background:#fff;border-radius:16px;padding:2rem;max-width:480px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.1)}
+  .setup-card h1{font-size:22px;font-weight:600;margin-bottom:6px;color:#1a1a1a}
+  .setup-card p{font-size:14px;color:#666;margin-bottom:1.5rem;line-height:1.6}
+  .setup-card label{font-size:13px;font-weight:500;color:#444;display:block;margin-bottom:5px}
+  .setup-card input{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;transition:border-color .2s}
+  .setup-card input:focus{border-color:#2563eb}
+  .step{background:#f8faff;border:1px solid #dbeafe;border-radius:10px;padding:1rem;margin-bottom:1rem}
+  .step-num{display:inline-block;background:#2563eb;color:#fff;border-radius:50%;width:22px;height:22px;font-size:12px;font-weight:600;text-align:center;line-height:22px;margin-right:6px}
+  .step p{font-size:13px;color:#374151;margin-top:6px;line-height:1.6}
+  .step code{background:#e0e7ff;color:#3730a3;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px}
+  .btn-primary{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+  .btn-primary:hover{background:#1d4ed8}
+  .btn-primary:active{transform:scale(0.98)}
+  .error-msg{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 12px;border-radius:8px;font-size:13px;margin-top:10px;display:none}
+
+  #app{display:none;padding:12px;max-width:960px;margin:0 auto}
+  .header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+  .header h1{font-size:17px;font-weight:600;color:#1a1a1a}
+  .stats{display:flex;gap:6px;flex-wrap:wrap}
+  .stat{background:#f3f4f6;border-radius:8px;padding:5px 10px;font-size:12px;color:#6b7280}
+  .stat span{font-weight:600;color:#111}
+  .stat.green span{color:#15803d}
+  .stat.red span{color:#dc2626}
+  .online-badge{font-size:11px;background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:20px;font-weight:500}
+  .online-badge.offline{background:#fef3c7;color:#92400e}
+
+  .search-row{display:flex;gap:8px;margin-bottom:10px}
+  .search-row input{flex:1;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;background:#fff;transition:border-color .2s}
+  .search-row input:focus{border-color:#2563eb}
+  .btn-sm{padding:9px 14px;border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;font-size:13px;cursor:pointer;white-space:nowrap;color:#374151}
+  .btn-sm:active{background:#f3f4f6}
+
+  .legend{display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap;padding:0 2px}
+  .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:#6b7280}
+  .dot{width:12px;height:12px;border-radius:3px}
+  .dot.g{background:#16a34a}
+  .dot.r{background:#dc2626}
+  .dot.b{background:#2563eb}
+
+  .sea{background:#bfdbfe;border-radius:10px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1e3a5f;font-weight:600;letter-spacing:.08em;margin-bottom:10px}
+
+  .grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-bottom:12px}
+  @media(max-width:480px){.grid{grid-template-columns:repeat(5,1fr)}}
+
+  .sb{border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:2px solid transparent;transition:transform .1s,opacity .2s;user-select:none;-webkit-tap-highlight-color:transparent}
+  .sb svg{width:18px;height:18px;margin-bottom:1px}
+  .sb span{font-size:9px;font-weight:500;opacity:.75}
+  .sb:active{transform:scale(0.88)}
+  .sb.free{background:#dcfce7;border-color:#16a34a;color:#14532d}
+  .sb.busy{background:#fee2e2;border-color:#dc2626;color:#7f1d1d}
+  .sb.sel{outline:3px solid #2563eb;outline-offset:1px}
+  .sb.dim{opacity:.2;pointer-events:none}
+
+  .panel{background:#fff;border-radius:14px;padding:1.25rem;box-shadow:0 2px 12px rgba(0,0,0,0.1);display:none;margin-bottom:12px}
+  .panel.open{display:block}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .panel-head h2{font-size:16px;font-weight:600;color:#111}
+  .close-btn{background:none;border:none;font-size:20px;cursor:pointer;color:#9ca3af;line-height:1;padding:0 4px}
+  .info-chips{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .chip{background:#f3f4f6;border-radius:8px;padding:6px 10px;font-size:12px;color:#374151}
+  .chip strong{display:block;font-size:14px;color:#111;margin-top:1px}
+  .note-box{background:#fefce8;border:1px solid #fef08a;border-radius:8px;padding:8px 10px;font-size:13px;color:#713f12;margin-bottom:12px}
+  label.fl{font-size:12px;font-weight:500;color:#6b7280;display:block;margin-bottom:4px}
+  input.fi,textarea.fi{width:100%;padding:9px 11px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;background:#fff;transition:border-color .2s}
+  input.fi:focus,textarea.fi:focus{border-color:#2563eb}
+  textarea.fi{height:58px;resize:vertical}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{padding:9px 16px;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid #e5e7eb;background:#fff;color:#374151;transition:background .15s}
+  .btn:active{transform:scale(0.97)}
+  .btn.green{background:#dcfce7;border-color:#16a34a;color:#14532d}
+  .btn.red{background:#fee2e2;border-color:#dc2626;color:#7f1d1d}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw}
+  .toast.show{opacity:1}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;margin-right:4px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+
+<!-- KURULUM EKRANI -->
+<div id="setup-screen">
+  <div class="setup-card">
+    <h1>🏖️ Beach Rezervasyon Kurulumu</h1>
+    <p>Firebase bilgilerini gir, uygulama tüm cihazlarda gerçek zamanlı çalışsın.</p>
+
+    <div class="step">
+      <span class="step-num">1</span><strong>Firebase projesi oluştur</strong>
+      <p><a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → "Add project" → proje adı yaz → Continue → Continue → Create project</p>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span><strong>Realtime Database ekle</strong>
+      <p>Sol menü → Build → Realtime Database → Create database → <code>Start in test mode</code> → Enable</p>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span><strong>Web app ekle ve config al</strong>
+      <p>Project Settings (⚙️) → General → "Add app" → Web (&lt;/&gt;) → Register app → aşağıdaki değerleri kopyala</p>
+    </div>
+
+    <label>API Key</label>
+    <input type="text" id="c-apiKey" placeholder="AIzaSy...">
+    <label>Auth Domain</label>
+    <input type="text" id="c-authDomain" placeholder="myproject.firebaseapp.com">
+    <label>Database URL</label>
+    <input type="text" id="c-dbURL" placeholder="https://myproject-default-rtdb.firebaseio.com">
+    <label>Project ID</label>
+    <input type="text" id="c-projectId" placeholder="my-beach-project">
+
+    <button class="btn-primary" onclick="startApp()">Uygulamayı Başlat</button>
+    <div class="error-msg" id="err-msg"></div>
+  </div>
+</div>
+
+<!-- ANA UYGULAMA -->
+<div id="app">
+  <div class="header">
+    <h1>🏖️ Beach Rezervasyon</h1>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <div class="stats">
+        <div class="stat green">Boş: <span id="s-free">100</span></div>
+        <div class="stat red">Dolu: <span id="s-busy">0</span></div>
+        <div class="stat">%<span id="s-pct">0</span></div>
+      </div>
+      <div class="online-badge" id="online-badge"><span class="sync-dot"></span>Canlı</div>
+    </div>
+  </div>
+
+  <div class="search-row">
+    <input type="text" id="search" placeholder="İsim ara..." oninput="doSearch(this.value)">
+    <button class="btn-sm" onclick="clearSearch()">Temizle</button>
+    <button class="btn-sm" onclick="resetDay()" title="Günü sıfırla">🔄 Gün sonu</button>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="dot g"></div>Boş</div>
+    <div class="leg"><div class="dot r"></div>Dolu</div>
+    <div class="leg"><div class="dot b"></div>Seçili</div>
+  </div>
+
+  <div class="sea">~ DENİZ ~</div>
+  <div class="grid" id="grid"></div>
+
+  <div class="panel" id="panel">
+    <div class="panel-head">
+      <h2 id="panel-title">Şezlong #1</h2>
+      <button class="close-btn" onclick="closePanel()">✕</button>
+    </div>
+    <div id="panel-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+const TOTAL = 100;
+let db = null;
+let state = Array.from({length:TOTAL},(_,i)=>({id:i+1,busy:false,name:'',phone:'',note:'',time:''}));
+let selected = null;
+let searchVal = '';
+
+function loadConfig(){
+  try{const c=localStorage.getItem('fb_cfg_v1');return c?JSON.parse(c):null;}catch(e){return null;}
+}
+function saveConfig(cfg){
+  localStorage.setItem('fb_cfg_v1',JSON.stringify(cfg));
+}
+
+function startApp(){
+  const cfg = {
+    apiKey: document.getElementById('c-apiKey').value.trim(),
+    authDomain: document.getElementById('c-authDomain').value.trim(),
+    databaseURL: document.getElementById('c-dbURL').value.trim(),
+    projectId: document.getElementById('c-projectId').value.trim(),
+  };
+  if(!cfg.apiKey||!cfg.databaseURL){
+    showErr('API Key ve Database URL zorunlu!');return;
+  }
+  saveConfig(cfg);
+  initFirebase(cfg);
+}
+
+function showErr(msg){
+  const e=document.getElementById('err-msg');
+  e.textContent=msg;e.style.display='block';
+}
+
+function initFirebase(cfg){
+  try{
+    if(firebase.apps.length===0) firebase.initializeApp(cfg);
+    db = firebase.database();
+    document.getElementById('setup-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    listenToData();
+  }catch(e){
+    showErr('Firebase bağlantı hatası: '+e.message);
+  }
+}
+
+function listenToData(){
+  const ref = db.ref('beach/sunbeds');
+  ref.on('value', snap=>{
+    const data = snap.val();
+    if(data){
+      Object.keys(data).forEach(k=>{
+        const idx=parseInt(k)-1;
+        if(idx>=0&&idx<TOTAL) state[idx]=data[k];
+      });
+    }
+    renderGrid();
+    updateStats();
+    setOnline(true);
+  }, err=>{
+    setOnline(false);
+    toast('Bağlantı hatası: '+err.message);
+  });
+
+  db.ref('.info/connected').on('value', snap=>{
+    setOnline(snap.val()===true);
+  });
+}
+
+function setOnline(v){
+  const b=document.getElementById('online-badge');
+  b.className='online-badge'+(v?'':' offline');
+  b.innerHTML=v?'<span class="sync-dot"></span>Canlı':'⚠️ Çevrimdışı';
+}
+
+function updateDB(id, data){
+  if(!db){toast('DB bağlı değil');return;}
+  db.ref('beach/sunbeds/'+id).set(data);
+}
+
+function updateStats(){
+  const busy=state.filter(s=>s.busy).length;
+  document.getElementById('s-free').textContent=TOTAL-busy;
+  document.getElementById('s-busy').textContent=busy;
+  document.getElementById('s-pct').textContent=Math.round(busy/TOTAL*100);
+}
+
+function renderGrid(){
+  const grid=document.getElementById('grid');
+  const frag=document.createDocumentFragment();
+  state.forEach(s=>{
+    const el=document.createElement('div');
+    let cls='sb '+(s.busy?'busy':'free');
+    if(selected===s.id) cls+=' sel';
+    if(searchVal&&!s.name.toLowerCase().includes(searchVal.toLowerCase())&&searchVal!='') cls+=' dim';
+    el.className=cls;
+    el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l2-7h12l2 7"/><path d="M3 11h18v2H3z"/><path d="M7 13v7m10-7v7"/></svg><span>#${s.id}</span>`;
+    el.title=s.busy?(s.name||'Rezerveli'):'Boş';
+    el.onclick=()=>selectSB(s.id);
+    frag.appendChild(el);
+  });
+  grid.innerHTML='';
+  grid.appendChild(frag);
+}
+
+function selectSB(id){
+  selected=id;
+  renderGrid();
+  showPanel(id);
+}
+
+function showPanel(id){
+  const s=state[id-1];
+  document.getElementById('panel-title').textContent='Şezlong #'+id;
+  const body=document.getElementById('panel-body');
+
+  if(!s.busy){
+    body.innerHTML=`
+      <label class="fl">Misafir adı *</label>
+      <input class="fi" type="text" id="f-name" placeholder="Ad Soyad" maxlength="60">
+      <label class="fl">Telefon</label>
+      <input class="fi" type="tel" id="f-phone" placeholder="0555 000 00 00">
+      <label class="fl">Not</label>
+      <textarea class="fi" id="f-note" placeholder="Şemsiye, içecek, özel istek..."></textarea>
+      <div class="btn-row">
+        <button class="btn green" onclick="reserve(${id})">Rezerve Et</button>
+        <button class="btn" onclick="closePanel()">İptal</button>
+      </div>`;
+    setTimeout(()=>document.getElementById('f-name')?.focus(),100);
+  } else {
+    body.innerHTML=`
+      <div class="info-chips">
+        <div class="chip"><small>Ad</small><strong>${esc(s.name||'—')}</strong></div>
+        ${s.phone?`<div class="chip"><small>Tel</small><strong>${esc(s.phone)}</strong></div>`:''}
+        ${s.time?`<div class="chip"><small>Saat</small><strong>${esc(s.time)}</strong></div>`:''}
+      </div>
+      ${s.note?`<div class="note-box">📝 ${esc(s.note)}</div>`:''}
+      <div class="btn-row">
+        <button class="btn red" onclick="release(${id})">Boşalt</button>
+        <button class="btn" onclick="editPanel(${id})">Düzenle</button>
+      </div>`;
+  }
+  document.getElementById('panel').className='panel open';
+  document.getElementById('panel').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function reserve(id){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Misafir adı zorunlu!');return;}
+  const rec={id,busy:true,name,
+    phone:document.getElementById('f-phone').value.trim(),
+    note:document.getElementById('f-note').value.trim(),
+    time:new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})};
+  state[id-1]=rec;
+  updateDB(id,rec);
+  renderGrid();updateStats();showPanel(id);
+  toast('✅ #'+id+' rezerve — '+name);
+}
+
+function release(id){
+  if(!confirm('#'+id+' numaralı şezlong boşaltılsın mı?'))return;
+  const rec={id,busy:false,name:'',phone:'',note:'',time:''};
+  state[id-1]=rec;
+  updateDB(id,rec);
+  renderGrid();updateStats();closePanel();
+  toast('🟢 #'+id+' boşaltıldı');
+}
+
+function editPanel(id){
+  const s=state[id-1];
+  const body=document.getElementById('panel-body');
+  body.innerHTML=`
+    <label class="fl">Misafir adı *</label>
+    <input class="fi" type="text" id="f-name" value="${esc(s.name)}" maxlength="60">
+    <label class="fl">Telefon</label>
+    <input class="fi" type="tel" id="f-phone" value="${esc(s.phone)}">
+    <label class="fl">Not</label>
+    <textarea class="fi" id="f-note">${esc(s.note)}</textarea>
+    <div class="btn-row">
+      <button class="btn green" onclick="saveEdit(${id})">Kaydet</button>
+      <button class="btn" onclick="showPanel(${id})">İptal</button>
+    </div>`;
+}
+
+function saveEdit(id){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Misafir adı zorunlu!');return;}
+  const s=state[id-1];
+  s.name=name;
+  s.phone=document.getElementById('f-phone').value.trim();
+  s.note=document.getElementById('f-note').value.trim();
+  updateDB(id,s);
+  renderGrid();showPanel(id);
+  toast('💾 #'+id+' güncellendi');
+}
+
+function closePanel(){
+  selected=null;
+  document.getElementById('panel').className='panel';
+  renderGrid();
+}
+
+function doSearch(v){
+  searchVal=v;
+  renderGrid();
+  if(v){
+    const match=state.find(s=>s.name.toLowerCase().includes(v.toLowerCase()));
+    if(match){selected=match.id;showPanel(match.id);renderGrid();}
+  } else {
+    closePanel();
+  }
+}
+
+function clearSearch(){
+  document.getElementById('search').value='';
+  searchVal='';
+  closePanel();
+}
+
+function resetDay(){
+  if(!confirm('Günü sıfırla — TÜM şezlonglar boşaltılsın mı? (Gün sonu için)'))return;
+  state.forEach(s=>{s.busy=false;s.name='';s.phone='';s.note='';s.time='';});
+  if(db) db.ref('beach/sunbeds').set(
+    Object.fromEntries(state.map(s=>[s.id,s]))
+  );
+  renderGrid();updateStats();closePanel();
+  toast('🔄 Tüm şezlonglar sıfırlandı');
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.className='toast',2500);
+}
+
+// Kayıtlı config varsa direkt başlat
+window.addEventListener('load',()=>{
+  const cfg=loadConfig();
+  if(cfg&&cfg.apiKey&&cfg.databaseURL){
+    document.getElementById('c-apiKey').value=cfg.apiKey;
+    document.getElementById('c-authDomain').value=cfg.authDomain||'';
+    document.getElementById('c-dbURL').value=cfg.databaseURL;
+    document.getElementById('c-projectId').value=cfg.projectId||'';
+    initFirebase(cfg);
+  }
+});
+</script>
+</body>
+</html>

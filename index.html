@@ -209,7 +209,7 @@
       <thead>
         <tr>
           <th>Tarih/Saat</th>
-          <th>İşlem</th>
+          <th>Durum</th>
           <th>Şezlong</th>
           <th>Misafir</th>
           <th>Telefon</th>
@@ -252,7 +252,7 @@ const BASE_CFG={
 };
 
 let db=null,aktif='',searchVal='';
-let state=Array.from({length:TOTAL},(_,i)=>({id:i+1,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tip:'',grup:''}));
+let state=Array.from({length:TOTAL},(_,i)=>({id:i+1,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tip:'',grup:'',kayitId:''}));
 let allLogs=[];
 
 // ── localStorage ──
@@ -343,28 +343,50 @@ function setOnline(v){
 }
 function upDB(id,data){if(db)db.ref('beach/sunbeds/'+id).set(data);}
 
-// ── Log kaydet ──
-function addLog(islem,sb,misafir,phone,startDate,days,tip,note,cikisT){
-  if(!db)return;
+// ── Log kaydet (tek satır mantığı) ──
+// Rezerve edilince yeni satır açılır (kayitId state'e kaydedilir).
+// Boşaltılınca AYNI satır güncellenir (çıkış bilgisi eklenir).
+function openLogRow(sb,misafir,phone,startDate,days,tip,note){
+  if(!db)return null;
   const now=new Date();
   const saat=now.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+  const ref=db.ref('beach/logs').push();
   const log={
     ts:now.getTime(),
     tarihSaat:now.toLocaleString('tr-TR'),
-    islem,               // 'giris' | 'cikis' | 'guncelle'
+    durum:'aktif',          // 'aktif' | 'tamamlandi'
     sezlong:sb,
     misafir:misafir||'',
     telefon:phone||'',
     girisTarihi:startDate||'',
-    girisSaati:islem==='giris'?saat:'',
-    cikisTarihi:cikisT||'',
-    cikisSaati:islem==='cikis'?saat:'',
+    girisSaati:saat,
+    cikisTarihi:'',
+    cikisSaati:'',
     gun:days||0,
     tip:tip||'tek',
     personel:aktif,
     not:note||''
   };
-  db.ref('beach/logs').push(log);
+  ref.set(log);
+  return ref.key;
+}
+function closeLogRow(kayitId){
+  if(!db||!kayitId)return;
+  const now=new Date();
+  const saat=now.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+  const bugun=today();
+  db.ref('beach/logs/'+kayitId).update({
+    durum:'tamamlandi',
+    cikisTarihi:bugun,
+    cikisSaati:saat
+  });
+}
+function updateLogRow(kayitId,misafir,phone,startDate,days,note){
+  if(!db||!kayitId)return;
+  db.ref('beach/logs/'+kayitId).update({
+    misafir:misafir||'',telefon:phone||'',
+    girisTarihi:startDate||'',gun:days||0,not:note||''
+  });
 }
 
 function updateStats(){
@@ -528,11 +550,11 @@ function closeMo(){document.getElementById('mo').className='mo';}
 function moClick(e){if(e.target===document.getElementById('mo'))closeMo();}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function mkRec(id,name,phone,note,sd,days,tip,grup){
+function mkRec(id,name,phone,note,sd,days,tip,grup,kayitId){
   return{id,busy:true,name,phone,note,
     time:new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}),
     startDate:sd,days,personel:aktif,
-    tarih:new Date().toLocaleDateString('tr-TR'),tip,grup};
+    tarih:new Date().toLocaleDateString('tr-TR'),tip,grup,kayitId:kayitId||''};
 }
 
 function reserve(id){
@@ -545,13 +567,15 @@ function reserve(id){
   const tip=document.getElementById('f-tip').value;
   const cid=ciftId(id);
   const grup=tip==='cift'?('g'+Date.now()):'';
-  const rec=mkRec(id,name,phone,note,sd,days,tip,grup);
+
+  const kayitId1=openLogRow(id,name,phone,sd,days,tip,note);
+  const rec=mkRec(id,name,phone,note,sd,days,tip,grup,kayitId1);
   state[id-1]=rec;upDB(id,rec);
-  addLog('giris',id,name,phone,sd,days,tip,note,endDate(sd,days));
+
   if(tip==='cift'&&ciftOk(id)&&!state[cid-1].busy){
-    const rec2=mkRec(cid,name,phone,note,sd,days,'cift',grup);
+    const kayitId2=openLogRow(cid,name,phone,sd,days,'cift',note);
+    const rec2=mkRec(cid,name,phone,note,sd,days,'cift',grup,kayitId2);
     state[cid-1]=rec2;upDB(cid,rec2);
-    addLog('giris',cid,name,phone,sd,days,'cift',note,endDate(sd,days));
     toast('✅ #'+id+' ve #'+cid+' rezerve (çift) — '+name);
   } else {
     toast('✅ #'+id+' rezerve — '+name+(days?' ('+days+' gün)':''));
@@ -564,9 +588,11 @@ function release(id){
   const cid=ciftId(id);
   const isCift=s.tip==='cift'&&ciftOk(id)&&state[cid-1].busy&&state[cid-1].grup===s.grup&&s.grup;
   if(!confirm(isCift?`#${id} ve #${cid} şezlong boşaltılsın mı?`:`#${id} şezlong boşaltılsın mı?`))return;
-  addLog('cikis',id,s.name,s.phone,s.startDate,s.days,s.tip,s.note,'');
-  if(isCift)addLog('cikis',cid,state[cid-1].name,state[cid-1].phone,state[cid-1].startDate,state[cid-1].days,'cift',state[cid-1].note,'');
-  const em=(xid)=>({id:xid,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',grup:''});
+
+  closeLogRow(s.kayitId);
+  if(isCift)closeLogRow(state[cid-1].kayitId);
+
+  const em=(xid)=>({id:xid,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',grup:'',kayitId:''});
   state[id-1]=em(id);upDB(id,state[id-1]);
   if(isCift){state[cid-1]=em(cid);upDB(cid,state[cid-1]);}
   renderGrid();updateStats();closeMo();
@@ -584,7 +610,7 @@ function saveEdit(id){
   s.startDate=sd;s.days=days;
   s.personel=aktif;s.tarih=new Date().toLocaleDateString('tr-TR');
   upDB(id,s);
-  addLog('guncelle',id,s.name,s.phone,sd,days,s.tip,s.note,endDate(sd,days));
+  updateLogRow(s.kayitId,s.name,s.phone,sd,days,s.note);
   renderGrid();updateStats();closeMo();
   toast('💾 #'+id+' güncellendi');
 }
@@ -604,8 +630,8 @@ function resetDay(){
   const tmz=[...gunluk,...biten];
   if(!tmz.length){toast('Temizlenecek şezlong yok.');return;}
   tmz.forEach(s=>{
-    addLog('cikis',s.id,s.name,s.phone,s.startDate,s.days,s.tip,s.note,'');
-    Object.assign(s,{busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',grup:''});
+    closeLogRow(s.kayitId);
+    Object.assign(s,{busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',grup:'',kayitId:''});
     upDB(s.id,s);
   });
   renderGrid();updateStats();closeMo();
@@ -629,15 +655,15 @@ function renderLog(logs){
     return;
   }
   tbody.innerHTML=logs.map(l=>{
-    const islemBadge={giris:'giris',cikis:'cikis',guncelle:'guncelle'}[l.islem]||'';
-    const islemText={giris:'Giriş',cikis:'Çıkış',guncelle:'Güncelleme'}[l.islem]||l.islem;
+    const durumBadge=l.durum==='aktif'?'giris':'cikis';
+    const durumText=l.durum==='aktif'?'🟢 Aktif':'⚪ Tamamlandı';
     const girisStr=l.girisTarihi?new Date(l.girisTarihi+'T00:00:00').toLocaleDateString('tr-TR'):'—';
     const cikisStr=l.cikisTarihi?new Date(l.cikisTarihi+'T00:00:00').toLocaleDateString('tr-TR'):'—';
     const girisSaatStr=l.girisSaati||'—';
     const cikisSaatStr=l.cikisSaati||'—';
     return`<tr>
       <td style="white-space:nowrap">${esc(l.tarihSaat||'')}</td>
-      <td><span class="log-badge ${islemBadge}">${islemText}</span></td>
+      <td><span class="log-badge ${durumBadge}">${durumText}</span></td>
       <td style="font-weight:600">#${l.sezlong}</td>
       <td>${esc(l.misafir||'')}</td>
       <td>${esc(l.telefon||'')}</td>
@@ -658,16 +684,16 @@ function filterLog(){
   const d=document.getElementById('log-date').value;
   let filtered=allLogs;
   if(q)filtered=filtered.filter(l=>(l.misafir||'').toLowerCase().includes(q)||(l.telefon||'').includes(q)||String(l.sezlong).includes(q));
-  if(d)filtered=filtered.filter(l=>(l.tarihSaat||'').startsWith(new Date(d+'T00:00:00').toLocaleDateString('tr-TR').split('.').reverse().join('.')||d)||(l.girisTarihi||'')=== d||(l.cikisTarihi||'')=== d);
+  if(d)filtered=filtered.filter(l=>(l.girisTarihi||'')===d||(l.cikisTarihi||'')===d);
   renderLog(filtered);
 }
 
 function exportCSV(){
   if(!allLogs.length){toast('İndirilecek kayıt yok.');return;}
-  const header=['Tarih/Saat','İşlem','Şezlong','Misafir','Telefon','Giriş Tarihi','Giriş Saati','Çıkış Tarihi','Çıkış Saati','Gün Sayısı','Tip','Personel','Not'];
+  const header=['Tarih/Saat','Durum','Şezlong','Misafir','Telefon','Giriş Tarihi','Giriş Saati','Çıkış Tarihi','Çıkış Saati','Gün Sayısı','Tip','Personel','Not'];
   const rows=allLogs.map(l=>[
     l.tarihSaat||'',
-    {giris:'Giriş',cikis:'Çıkış',guncelle:'Güncelleme'}[l.islem]||l.islem,
+    l.durum==='aktif'?'Aktif':'Tamamlandı',
     '#'+l.sezlong,
     l.misafir||'',
     l.telefon||'',

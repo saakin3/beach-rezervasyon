@@ -6,163 +6,175 @@
 <title>Beach Rezervasyon</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;padding:0}
-
-  #personel-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
-  .personel-card{background:#fff;border-radius:16px;padding:2rem;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.12);text-align:center}
-  .personel-card h2{font-size:22px;font-weight:600;color:#111;margin-bottom:6px}
-  .personel-card p{font-size:14px;color:#6b7280;margin-bottom:1.25rem}
-  .personel-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
-  .personel-btn{padding:12px;border:1.5px solid #e5e7eb;border-radius:10px;background:#f9fafb;font-size:15px;font-weight:500;cursor:pointer;color:#374151;transition:all .15s}
-  .personel-btn:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
-  .personel-divider{font-size:12px;color:#9ca3af;margin:12px 0;position:relative}
-  .personel-divider::before,.personel-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:#e5e7eb}
-  .personel-divider::before{left:0}.personel-divider::after{right:0}
-  .personel-card input{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;margin-bottom:10px;transition:border-color .2s;color:#111}
-  .personel-card input:focus{border-color:#2563eb}
-  .personel-card .btn-giris{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
-  .personel-card .btn-giris:active{transform:scale(0.98)}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh}
+  .screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+  .card{background:#fff;border-radius:16px;padding:2rem;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.12);text-align:center}
+  .card h2{font-size:20px;font-weight:600;color:#111;margin-bottom:6px}
+  .card p{font-size:13px;color:#6b7280;margin-bottom:1.25rem;line-height:1.6}
+  .card input{width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:9px;font-size:14px;outline:none;margin-bottom:10px;color:#111;transition:border-color .2s}
+  .card input:focus{border-color:#2563eb}
+  .card .lbl{font-size:12px;font-weight:500;color:#6b7280;display:block;text-align:left;margin-bottom:4px}
+  .card .btn-p{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:2px}
+  .card .btn-p:active{transform:scale(0.98)}
+  .plist{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+  .pbtn{padding:12px;border:1.5px solid #e5e7eb;border-radius:9px;background:#f9fafb;font-size:14px;font-weight:500;cursor:pointer;color:#374151;transition:all .15s}
+  .pbtn:hover{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+  .divider{font-size:12px;color:#9ca3af;margin:10px 0;position:relative}
+  .divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:#e5e7eb}
+  .divider::before{left:0}.divider::after{right:0}
 
   #app{display:none;padding:12px;max-width:1100px;margin:0 auto}
   .header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
   .header h1{font-size:17px;font-weight:600;color:#1a1a1a}
-  .header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .hright{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .stats{display:flex;gap:6px;flex-wrap:wrap}
   .stat{background:#f3f4f6;border-radius:8px;padding:5px 10px;font-size:12px;color:#6b7280}
   .stat span{font-weight:600;color:#111}
-  .stat.green span{color:#15803d}
-  .stat.red span{color:#dc2626}
-  .online-badge{font-size:11px;background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:20px;font-weight:500}
-  .online-badge.offline{background:#fef3c7;color:#92400e}
-  .personel-badge{background:#eff6ff;color:#1d4ed8;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:500;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:4px}
-  .personel-badge:hover{background:#dbeafe}
+  .stat.g span{color:#15803d}.stat.r span{color:#dc2626}
+  .badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;border:none;cursor:pointer}
+  .badge.online{background:#dcfce7;color:#15803d}
+  .badge.offline{background:#fef3c7;color:#92400e}
+  .badge.per{background:#eff6ff;color:#1d4ed8}
+  .badge.per:hover{background:#dbeafe}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:#16a34a;display:inline-block;margin-right:3px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-  .search-row{display:flex;gap:8px;margin-bottom:10px}
-  .search-row input{flex:1;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;background:#fff;transition:border-color .2s}
-  .search-row input:focus{border-color:#2563eb}
-  .btn-sm{padding:9px 14px;border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;font-size:13px;cursor:pointer;white-space:nowrap;color:#374151}
-  .btn-sm:active{background:#f3f4f6}
+  .srow{display:flex;gap:8px;margin-bottom:10px}
+  .srow input{flex:1;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;outline:none;background:#fff}
+  .srow input:focus{border-color:#2563eb}
+  .bsm{padding:9px 13px;border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;font-size:13px;cursor:pointer;color:#374151;white-space:nowrap}
+  .bsm:active{background:#f3f4f6}
 
-  .legend{display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap;padding:0 2px}
+  .legend{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap;padding:0 2px}
   .leg{display:flex;align-items:center;gap:5px;font-size:12px;color:#6b7280}
   .dot{width:12px;height:12px;border-radius:3px}
-  .dot.g{background:#16a34a}.dot.r{background:#dc2626}.dot.o{background:#d97706}
 
-  .sea{background:#bfdbfe;border-radius:10px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1e3a5f;font-weight:600;letter-spacing:.08em;margin-bottom:10px}
-
-  .beach-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px}
+  .sea{background:#bfdbfe;border-radius:10px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1e3a5f;font-weight:600;letter-spacing:.06em;margin-bottom:10px}
+  .beach-rows{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px}
   .beach-row{display:flex;gap:3px;align-items:stretch;min-width:600px}
-  .umbrella-sep{display:flex;align-items:center;justify-content:center;font-size:18px;padding:0 2px;flex-shrink:0}
+  .usep{display:flex;align-items:center;justify-content:center;font-size:17px;padding:0 2px;flex-shrink:0}
 
   .sb{border-radius:7px;width:52px;min-width:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:2px solid transparent;transition:transform .1s,opacity .2s;user-select:none;-webkit-tap-highlight-color:transparent;padding:4px 2px;gap:1px}
-  .sb svg{width:15px;height:15px;flex-shrink:0}
-  .sb .sb-num{font-size:8px;font-weight:600;opacity:.8;line-height:1}
-  .sb .sb-days{font-size:8px;font-weight:700;line-height:1;margin-top:1px}
+  .sb svg{width:14px;height:14px;flex-shrink:0}
+  .sb .sn{font-size:8px;font-weight:600;opacity:.85;line-height:1}
+  .sb .sd{font-size:8px;font-weight:700;line-height:1;margin-top:1px}
   .sb:active{transform:scale(0.88)}
   .sb.free{background:#16a34a;border-color:#14532d;color:#fff}
   .sb.busy{background:#dc2626;border-color:#991b1b;color:#fff}
-  .sb.busy-cift{background:#dc2626;border-color:#991b1b;color:#fff;outline:3px solid #fbbf24;outline-offset:1px}
-  .sb.expiring{background:#d97706;border-color:#92400e;color:#fff}
-  .sb.expired{background:#6b7280;border-color:#4b5563;color:#fff}
+  .sb.cift{background:#dc2626;border-color:#991b1b;color:#fff;outline:3px solid #fbbf24;outline-offset:1px}
+  .sb.exp2{background:#d97706;border-color:#92400e;color:#fff}
+  .sb.exp0{background:#6b7280;border-color:#4b5563;color:#fff}
   .sb.dim{opacity:.2;pointer-events:none}
 
-  .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:16px}
-  .modal-overlay.open{display:flex}
-  .modal{background:#fff;border-radius:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);animation:popIn .2s ease}
-  @keyframes popIn{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
-  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid #f3f4f6;position:sticky;top:0;background:#fff;border-radius:16px 16px 0 0;z-index:1}
-  .modal-head h2{font-size:16px;font-weight:600;color:#111}
-  .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;line-height:1;padding:0 4px;border-radius:6px}
-  .modal-close:hover{background:#f3f4f6;color:#374151}
-  .modal-body{padding:16px 18px 20px}
+  .mo{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:16px}
+  .mo.open{display:flex}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);animation:pop .18s ease}
+  @keyframes pop{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
+  .mh{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 11px;border-bottom:1px solid #f3f4f6;position:sticky;top:0;background:#fff;border-radius:16px 16px 0 0;z-index:1}
+  .mh h2{font-size:16px;font-weight:600;color:#111}
+  .mx{background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;padding:0 4px;border-radius:6px}
+  .mx:hover{background:#f3f4f6;color:#374151}
+  .mb{padding:15px 18px 20px}
 
-  .tip-row{display:flex;gap:8px;margin-bottom:12px}
-  .tip-btn{flex:1;padding:10px;border-radius:9px;border:2px solid #e5e7eb;background:#f9fafb;font-size:14px;font-weight:600;cursor:pointer;color:#374151;transition:all .15s}
-  .tip-btn.active{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
-  .tip-btn:disabled{opacity:.4;cursor:not-allowed}
-
-  .info-chips{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-  .chip{background:#f3f4f6;border-radius:8px;padding:6px 10px;font-size:12px;color:#374151}
+  .chips{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+  .chip{background:#f3f4f6;border-radius:8px;padding:6px 10px;font-size:12px}
   .chip small{display:block;font-size:10px;color:#9ca3af;margin-bottom:1px}
   .chip strong{display:block;font-size:13px;color:#111}
-  .chip.warn{background:#fef3c7;color:#92400e}.chip.warn strong{color:#92400e}
-  .chip.danger{background:#fee2e2;color:#991b1b}.chip.danger strong{color:#991b1b}
-  .chip.blue{background:#eff6ff;color:#1d4ed8}.chip.blue strong{color:#1d4ed8}
-  .chip.purple{background:#f5f3ff;color:#6d28d9}.chip.purple strong{color:#6d28d9}
-  .note-box{background:#fefce8;border:1px solid #fef08a;border-radius:8px;padding:8px 10px;font-size:13px;color:#713f12;margin-bottom:12px}
-  label.fl{font-size:12px;font-weight:500;color:#6b7280;display:block;margin-bottom:4px}
-  input.fi,textarea.fi{width:100%;padding:9px 11px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;background:#fff;transition:border-color .2s;color:#111}
-  input.fi:focus,textarea.fi:focus{border-color:#2563eb}
-  textarea.fi{height:58px;resize:vertical}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:400px){.form-row{grid-template-columns:1fr}}
-  .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-  .btn{padding:10px 18px;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid #e5e7eb;background:#fff;color:#374151;transition:background .15s;flex:1}
+  .chip.w{background:#fef3c7;color:#92400e}.chip.w strong{color:#92400e}
+  .chip.d{background:#fee2e2;color:#991b1b}.chip.d strong{color:#991b1b}
+  .chip.b{background:#eff6ff;color:#1d4ed8}.chip.b strong{color:#1d4ed8}
+  .chip.v{background:#f5f3ff;color:#6d28d9}.chip.v strong{color:#6d28d9}
+  .nbox{background:#fefce8;border:1px solid #fef08a;border-radius:8px;padding:8px 10px;font-size:13px;color:#713f12;margin-bottom:12px}
+  .fl{font-size:12px;font-weight:500;color:#6b7280;display:block;margin-bottom:4px}
+  .fi{width:100%;padding:9px 11px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;font-family:inherit;background:#fff;color:#111;transition:border-color .2s}
+  .fi:focus{border-color:#2563eb}
+  textarea.fi{height:56px;resize:vertical}
+  .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:400px){.fr{grid-template-columns:1fr}}
+  .tiprow{display:flex;gap:8px;margin-bottom:12px}
+  .tipbtn{flex:1;padding:10px;border-radius:9px;border:2px solid #e5e7eb;background:#f9fafb;font-size:14px;font-weight:600;cursor:pointer;color:#374151;transition:all .15s}
+  .tipbtn.on{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+  .tipbtn:disabled{opacity:.4;cursor:not-allowed}
+  .brow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .btn{padding:10px 16px;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid #e5e7eb;background:#fff;color:#374151;flex:1}
   .btn:active{transform:scale(0.97)}
-  .btn.green{background:#dcfce7;border-color:#16a34a;color:#14532d}
-  .btn.red{background:#fee2e2;border-color:#dc2626;color:#7f1d1d}
-  .btn.gray{background:#f3f4f6;border-color:#d1d5db;color:#374151}
+  .btn.g{background:#dcfce7;border-color:#16a34a;color:#14532d}
+  .btn.r{background:#fee2e2;border-color:#dc2626;color:#7f1d1d}
+  .btn.gr{background:#f3f4f6;border-color:#d1d5db;color:#374151}
+  .pinfo{background:#eff6ff;border-radius:8px;padding:8px 10px;font-size:12px;color:#1d4ed8;margin-bottom:12px}
 
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:2000;white-space:nowrap;max-width:90vw}
   .toast.show{opacity:1}
-  .sync-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;margin-right:4px;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
 </head>
 <body>
 
-<div id="personel-screen">
-  <div class="personel-card">
-    <div style="font-size:36px;margin-bottom:8px">🏖️</div>
+<!-- GİRİŞ EKRANI: Personel adı + API Key -->
+<div class="screen" id="giris-screen">
+  <div class="card">
+    <div style="font-size:36px;margin-bottom:10px">🏖️</div>
     <h2>Beach Rezervasyon</h2>
-    <p>Devam etmek için adınızı seçin veya girin</p>
-    <div class="personel-list" id="personel-list"></div>
-    <div class="personel-divider">veya yeni isim</div>
-    <input type="text" id="personel-input" placeholder="Adınızı yazın..." maxlength="40"
-      onkeydown="if(event.key==='Enter')personelGiris()">
-    <button class="btn-giris" onclick="personelGiris()">Giriş Yap →</button>
+    <p>Adınızı seçin veya girin</p>
+
+    <div class="plist" id="plist"></div>
+    <div class="divider" id="divider">veya yeni isim</div>
+
+    <span class="lbl">Adınız</span>
+    <input type="text" id="per-input" placeholder="Ad Soyad" maxlength="40"
+      onkeydown="if(event.key==='Enter')document.getElementById('api-input').focus()">
+
+    <div id="api-wrap">
+      <span class="lbl">API Key <span style="color:#9ca3af;font-weight:400">(sadece ilk girişte)</span></span>
+      <input type="text" id="api-input" placeholder="AIzaSy..."
+        onkeydown="if(event.key==='Enter')girisYap()">
+    </div>
+
+    <button class="btn-p" onclick="girisYap()">Giriş Yap →</button>
   </div>
 </div>
 
+<!-- ANA UYGULAMA -->
 <div id="app">
   <div class="header">
     <h1>🏖️ Beach Rezervasyon</h1>
-    <div class="header-right">
+    <div class="hright">
       <div class="stats">
-        <div class="stat green">Boş: <span id="s-free">98</span></div>
-        <div class="stat red">Dolu: <span id="s-busy">0</span></div>
+        <div class="stat g">Boş: <span id="s-free">98</span></div>
+        <div class="stat r">Dolu: <span id="s-busy">0</span></div>
         <div class="stat">%<span id="s-pct">0</span></div>
       </div>
-      <div class="online-badge" id="online-badge"><span class="sync-dot"></span>Canlı</div>
-      <button class="personel-badge" id="personel-badge" onclick="cikisYap()" title="Çıkış yap">
-        👤 <span id="personel-adi">—</span> ✕
-      </button>
+      <button class="badge online" id="onl-badge"><span class="sync-dot"></span>Canlı</button>
+      <button class="badge per" onclick="cikis()">👤 <span id="per-adi">—</span> ✕</button>
     </div>
   </div>
-  <div class="search-row">
+
+  <div class="srow">
     <input type="text" id="search" placeholder="İsim ara..." oninput="doSearch(this.value)">
-    <button class="btn-sm" onclick="clearSearch()">Temizle</button>
-    <button class="btn-sm" onclick="resetDay()">🔄 Gün sonu</button>
+    <button class="bsm" onclick="clearSearch()">Temizle</button>
+    <button class="bsm" onclick="resetDay()">🔄 Gün sonu</button>
   </div>
+
   <div class="legend">
-    <div class="leg"><div class="dot g"></div>Boş</div>
-    <div class="leg"><div class="dot r"></div>Dolu</div>
-    <div class="leg"><div class="dot" style="background:#dc2626;outline:2px solid #fbbf24;outline-offset:1px;border-radius:3px"></div>Çift rezerve</div>
-    <div class="leg"><div class="dot o"></div>Son 2 gün</div>
-    <div class="leg"><div class="dot" style="background:#9ca3af"></div>Süresi doldu</div>
+    <div class="leg"><div class="dot" style="background:#16a34a"></div>Boş</div>
+    <div class="leg"><div class="dot" style="background:#dc2626"></div>Dolu</div>
+    <div class="leg"><div class="dot" style="background:#dc2626;outline:2px solid #fbbf24;outline-offset:1px;border-radius:3px"></div>Çift</div>
+    <div class="leg"><div class="dot" style="background:#d97706"></div>Son 2 gün</div>
+    <div class="leg"><div class="dot" style="background:#6b7280"></div>Bitti</div>
     <div class="leg">☂️ Şemsiye</div>
   </div>
+
   <div class="sea">~ DENİZ ~</div>
   <div class="beach-rows" id="beach-rows"></div>
 </div>
 
-<div class="modal-overlay" id="modal-overlay" onclick="overlayClick(event)">
-  <div class="modal" id="modal">
-    <div class="modal-head">
-      <h2 id="modal-title">Şezlong #1</h2>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+<!-- MODAL -->
+<div class="mo" id="mo" onclick="moClick(event)">
+  <div class="modal">
+    <div class="mh">
+      <h2 id="mo-title">Şezlong</h2>
+      <button class="mx" onclick="closeMo()">✕</button>
     </div>
-    <div class="modal-body" id="modal-body"></div>
+    <div class="mb" id="mo-body"></div>
   </div>
 </div>
 
@@ -171,244 +183,279 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
-const TOTAL=98,COLS=14,ROWS=7,UMBRELLAS=7;
-const FIREBASE_CFG={
-  apiKey:"AIzaSyBft4YofJC9iCtDMIOQwecIaneYOvotzGU",
+const TOTAL=98,COLS=14,ROWS=7,UMB=7;
+
+// Sabit config — sadece API key değişiyor
+const BASE_CFG={
   authDomain:"beach-rezervasyon.firebaseapp.com",
   databaseURL:"https://beach-rezervasyon-default-rtdb.firebaseio.com",
   projectId:"beach-rezervasyon"
 };
 
-let db=null;
-let state=Array.from({length:TOTAL},(_,i)=>({id:i+1,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',ciftGrup:''}));
-let searchVal='';
-let aktifPersonel='';
+let db=null,aktif='',searchVal='';
+let state=Array.from({length:TOTAL},(_,i)=>({id:i+1,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tip:'',grup:''}));
 
-// Personel
-function getPersonelList(){try{const p=localStorage.getItem('beach_personeller');return p?JSON.parse(p):[]}catch(e){return[]}}
-function savePersonelList(l){try{localStorage.setItem('beach_personeller',JSON.stringify(l))}catch(e){}}
-function renderPersonelList(){
-  const list=getPersonelList();
-  const el=document.getElementById('personel-list');
-  el.innerHTML=list.length===0?'':list.map(p=>`<button class="personel-btn" onclick="secPersonel('${p.replace(/'/g,"\\'")}')" >👤 ${p}</button>`).join('');
-}
-function secPersonel(isim){
-  aktifPersonel=isim;
-  document.getElementById('personel-adi').textContent=isim;
-  document.getElementById('personel-screen').style.display='none';
-  document.getElementById('app').style.display='block';
-  initFirebase();
-}
-function personelGiris(){
-  const isim=document.getElementById('personel-input').value.trim();
-  if(!isim){alert('Lütfen adınızı girin!');return;}
-  const list=getPersonelList();
-  if(!list.includes(isim)){list.push(isim);savePersonelList(list);}
-  secPersonel(isim);
-}
-function cikisYap(){
-  if(!confirm('Çıkış yapılsın mı?'))return;
-  aktifPersonel='';
-  document.getElementById('app').style.display='none';
-  document.getElementById('personel-screen').style.display='flex';
-  document.getElementById('personel-input').value='';
-  renderPersonelList();closeModal();
-}
+// ── localStorage ──
+function getApiKey(){return localStorage.getItem('bch_apikey')||''}
+function setApiKey(k){localStorage.setItem('bch_apikey',k)}
+function getPlist(){try{const p=localStorage.getItem('bch_per');return p?JSON.parse(p):[]}catch(e){return[]}}
+function savePlist(l){localStorage.setItem('bch_per',JSON.stringify(l))}
 
-// Çift şezlong hesabı — aynı şemsiye altındaki iki şezlong
-function ciftId(id){return id%2===1?id+1:id-1;}
-function ciftGecerli(id){
-  const cid=ciftId(id);
-  if(cid<1||cid>TOTAL)return false;
-  return Math.floor((id-1)/COLS)===Math.floor((cid-1)/COLS);
-}
+// ── Giriş ekranı ──
+function renderGiris(){
+  const apiKey=getApiKey();
+  // API key varsa alanı gizle
+  const apiWrap=document.getElementById('api-wrap');
+  if(apiKey) apiWrap.style.display='none';
+  else apiWrap.style.display='block';
 
-// Tarih
-function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function remainingDays(startDate,totalDays){
-  if(!startDate||!totalDays)return null;
-  const end=new Date(startDate);end.setDate(end.getDate()+parseInt(totalDays));
-  const now=new Date();now.setHours(0,0,0,0);
-  return Math.ceil((end-now)/(1000*60*60*24));
-}
-
-function sbClass(s){
-  let cls='sb ';
-  if(!s.busy){cls+='free';}
-  else{
-    const rem=remainingDays(s.startDate,s.days);
-    if(rem!==null&&rem<=0)cls+='expired';
-    else if(rem!==null&&rem<=2)cls+='expiring';
-    else if(s.tip==='cift')cls+='busy-cift';
-    else cls+='busy';
+  // Kayıtlı personeller
+  const list=getPlist();
+  const plist=document.getElementById('plist');
+  const divider=document.getElementById('divider');
+  if(list.length){
+    plist.innerHTML=list.map(p=>`<button class="pbtn" onclick="hizliGiris('${p.replace(/'/g,"\\'")}')">👤 ${p}</button>`).join('');
+    divider.style.display='block';
+  } else {
+    plist.innerHTML='';
+    divider.style.display='none';
   }
-  if(searchVal&&!s.name.toLowerCase().includes(searchVal.toLowerCase()))cls+=' dim';
-  return cls;
-}
-function daysBadge(s){
-  if(!s.busy||!s.days)return'';
-  const rem=remainingDays(s.startDate,s.days);
-  if(rem===null)return'';
-  if(rem<=0)return`<div class="sb-days">bitti</div>`;
-  return`<div class="sb-days">${rem}g</div>`;
 }
 
-function initFirebase(){
+function hizliGiris(isim){
+  // API key zaten var, direkt giriş
+  const apiKey=getApiKey();
+  if(!apiKey){
+    // API key yoksa input'a ismi yaz, key girsin
+    document.getElementById('per-input').value=isim;
+    document.getElementById('api-wrap').style.display='block';
+    document.getElementById('api-input').focus();
+    return;
+  }
+  baslatApp(isim,apiKey);
+}
+
+function girisYap(){
+  const isim=document.getElementById('per-input').value.trim();
+  if(!isim){alert('Lütfen adınızı girin!');return;}
+
+  let apiKey=getApiKey();
+  if(!apiKey){
+    apiKey=document.getElementById('api-input').value.trim();
+    if(!apiKey){alert('API Key zorunlu! Firebase konsolundan alın.');return;}
+    setApiKey(apiKey);
+  }
+  baslatApp(isim,apiKey);
+}
+
+function baslatApp(isim,apiKey){
+  // Personeli kaydet
+  const list=getPlist();
+  if(!list.includes(isim)){list.push(isim);savePlist(list);}
+  aktif=isim;
+  document.getElementById('per-adi').textContent=isim;
+  document.getElementById('giris-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  initFB(apiKey);
+}
+
+function cikis(){
+  if(!confirm('Çıkış yapılsın mı?'))return;
+  aktif='';
+  document.getElementById('app').style.display='none';
+  document.getElementById('giris-screen').style.display='flex';
+  document.getElementById('per-input').value='';
+  renderGiris();
+  closeMo();
+}
+
+// ── Firebase ──
+function initFB(apiKey){
   try{
-    if(firebase.apps.length===0)firebase.initializeApp(FIREBASE_CFG);
+    const cfg={...BASE_CFG,apiKey};
+    if(firebase.apps.length===0)firebase.initializeApp(cfg);
     db=firebase.database();
     db.ref('beach/sunbeds').on('value',snap=>{
-      const data=snap.val();
-      if(data)Object.keys(data).forEach(k=>{const idx=parseInt(k)-1;if(idx>=0&&idx<TOTAL)state[idx]=data[k];});
+      const d=snap.val();
+      if(d)Object.keys(d).forEach(k=>{const i=parseInt(k)-1;if(i>=0&&i<TOTAL)state[i]=d[k];});
       renderGrid();updateStats();setOnline(true);
     },()=>setOnline(false));
-    db.ref('.info/connected').on('value',snap=>setOnline(snap.val()===true));
-  }catch(e){toast('Firebase hatası: '+e.message);}
+    db.ref('.info/connected').on('value',s=>setOnline(s.val()===true));
+  }catch(e){
+    toast('Bağlantı hatası — API Key kontrol edin');
+    localStorage.removeItem('bch_apikey');
+  }
 }
+
 function setOnline(v){
-  const b=document.getElementById('online-badge');
-  b.className='online-badge'+(v?'':' offline');
+  const b=document.getElementById('onl-badge');
+  b.className='badge '+(v?'online':'offline');
   b.innerHTML=v?'<span class="sync-dot"></span>Canlı':'⚠️ Çevrimdışı';
 }
-function updateDB(id,data){if(db)db.ref('beach/sunbeds/'+id).set(data);}
+function upDB(id,data){if(db)db.ref('beach/sunbeds/'+id).set(data);}
 function updateStats(){
   const busy=state.filter(s=>s.busy).length;
   document.getElementById('s-free').textContent=TOTAL-busy;
   document.getElementById('s-busy').textContent=busy;
   document.getElementById('s-pct').textContent=Math.round(busy/TOTAL*100);
 }
+
+// ── Çift ──
+function ciftId(id){return id%2===1?id+1:id-1;}
+function ciftOk(id){
+  const c=ciftId(id);
+  return c>=1&&c<=TOTAL&&Math.floor((id-1)/COLS)===Math.floor((c-1)/COLS);
+}
+
+// ── Grid ──
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function remDays(sd,nd){
+  if(!sd||!nd)return null;
+  const e=new Date(sd);e.setDate(e.getDate()+parseInt(nd));
+  const n=new Date();n.setHours(0,0,0,0);
+  return Math.ceil((e-n)/86400000);
+}
+function sbCls(s){
+  const dim=searchVal&&!s.name.toLowerCase().includes(searchVal.toLowerCase())?' dim':'';
+  if(!s.busy)return'sb free';
+  const r=remDays(s.startDate,s.days);
+  if(r!==null&&r<=0)return'sb exp0'+dim;
+  if(r!==null&&r<=2)return'sb exp2'+dim;
+  if(s.tip==='cift')return'sb cift'+dim;
+  return'sb busy'+dim;
+}
+function sbBadge(s){
+  if(!s.busy||!s.days)return'';
+  const r=remDays(s.startDate,s.days);
+  if(r===null)return'';
+  return`<div class="sd">${r<=0?'bitti':r+'g'}</div>`;
+}
 function sbEl(s){
-  return`<div class="${sbClass(s)}" title="${s.busy?(s.name+(s.tip==='cift'?' 👫':'')):'Boş'}" onclick="openModal(${s.id})">
+  return`<div class="${sbCls(s)}" title="${s.busy?(s.name+(s.tip==='cift'?' 👫':'')):'Boş'}" onclick="openMo(${s.id})">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l2-7h12l2 7"/><path d="M3 11h18v2H3z"/><path d="M7 13v7m10-7v7"/></svg>
-    <div class="sb-num">#${s.id}</div>${daysBadge(s)}</div>`;
+    <div class="sn">#${s.id}</div>${sbBadge(s)}</div>`;
 }
 function renderGrid(){
-  let html='';
+  let h='';
   for(let row=0;row<ROWS;row++){
-    html+=`<div class="beach-row">`;
-    for(let u=0;u<UMBRELLAS;u++){
+    h+=`<div class="beach-row">`;
+    for(let u=0;u<UMB;u++){
       const li=row*COLS+u*2+1,ri=row*COLS+u*2+2;
-      html+=sbEl(state[li-1]);
-      html+=`<div class="umbrella-sep">☂️</div>`;
-      html+=sbEl(state[ri-1]);
-      if(u<UMBRELLAS-1)html+=`<div style="width:5px;flex-shrink:0"></div>`;
+      h+=sbEl(state[li-1]);
+      h+=`<div class="usep">☂️</div>`;
+      h+=sbEl(state[ri-1]);
+      if(u<UMB-1)h+=`<div style="width:5px;flex-shrink:0"></div>`;
     }
-    html+=`</div>`;
+    h+=`</div>`;
   }
-  document.getElementById('beach-rows').innerHTML=html;
+  document.getElementById('beach-rows').innerHTML=h;
 }
 
-// Tek/çift seçimi
-function secTip(tip){
-  document.getElementById('f-tip').value=tip;
-  document.getElementById('btn-tek').className='tip-btn'+(tip==='tek'?' active':'');
-  document.getElementById('btn-cift').className='tip-btn'+(tip==='cift'?' active':'');
+// ── Modal ──
+function secTip(t){
+  document.getElementById('f-tip').value=t;
+  document.getElementById('btn-tek').className='tipbtn'+(t==='tek'?' on':'');
+  document.getElementById('btn-cift').className='tipbtn'+(t==='cift'?' on':'');
 }
 
-function openModal(id){
+function openMo(id){
   const s=state[id-1];
-  document.getElementById('modal-title').textContent='Şezlong #'+id;
-  const body=document.getElementById('modal-body');
-
+  document.getElementById('mo-title').textContent='Şezlong #'+id;
+  const body=document.getElementById('mo-body');
   if(!s.busy){
     const cid=ciftId(id);
-    const ciftOk=ciftGecerli(id)&&!state[cid-1].busy;
-    const ciftDolu=ciftGecerli(id)&&state[cid-1].busy;
+    const canCift=ciftOk(id)&&!state[cid-1].busy;
+    const ciftDolu=ciftOk(id)&&state[cid-1].busy;
     body.innerHTML=`
       <label class="fl">Misafir adı *</label>
       <input class="fi" type="text" id="f-name" placeholder="Ad Soyad" maxlength="60">
       <label class="fl">Telefon</label>
       <input class="fi" type="tel" id="f-phone" placeholder="0555 000 00 00">
-      <div class="form-row">
+      <div class="fr">
         <div><label class="fl">Başlangıç tarihi</label>
-        <input class="fi" type="date" id="f-startDate" value="${today()}"></div>
+        <input class="fi" type="date" id="f-sd" value="${today()}"></div>
         <div><label class="fl">Kaç gün?</label>
         <input class="fi" type="number" id="f-days" placeholder="örn: 7" min="1" max="365"></div>
       </div>
       <label class="fl">Rezerve tipi</label>
-      <div class="tip-row">
-        <button id="btn-tek" class="tip-btn active" onclick="secTip('tek')">👤 Tek kişi</button>
-        <button id="btn-cift" class="tip-btn" onclick="secTip('cift')" ${!ciftOk?'disabled':''}>
-          👫 Çift kişi ${ciftOk?'(#'+cid+' de)':ciftDolu?'(#'+cid+' dolu)':''}
+      <div class="tiprow">
+        <button id="btn-tek" class="tipbtn on" onclick="secTip('tek')">👤 Tek</button>
+        <button id="btn-cift" class="tipbtn" onclick="secTip('cift')" ${!canCift?'disabled':''}>
+          👫 Çift ${canCift?'(#'+cid+')':ciftDolu?'(#'+cid+' dolu)':''}
         </button>
       </div>
       <input type="hidden" id="f-tip" value="tek">
       <label class="fl">Not</label>
       <textarea class="fi" id="f-note" placeholder="Şemsiye, içecek, özel istek..."></textarea>
-      <div style="background:#eff6ff;border-radius:8px;padding:8px 10px;font-size:12px;color:#1d4ed8;margin-bottom:12px">
-        👤 İşlemi yapan: <strong>${esc(aktifPersonel)}</strong>
-      </div>
-      <div class="btn-row">
-        <button class="btn green" onclick="reserve(${id})">✓ Rezerve Et</button>
-        <button class="btn gray" onclick="closeModal()">İptal</button>
+      <div class="pinfo">👤 İşlemi yapan: <strong>${esc(aktif)}</strong></div>
+      <div class="brow">
+        <button class="btn g" onclick="reserve(${id})">✓ Rezerve Et</button>
+        <button class="btn gr" onclick="closeMo()">İptal</button>
       </div>`;
     setTimeout(()=>document.getElementById('f-name')?.focus(),120);
   } else {
-    const rem=remainingDays(s.startDate,s.days);
-    const endDate=s.startDate&&s.days?new Date(new Date(s.startDate).getTime()+s.days*86400000).toLocaleDateString('tr-TR'):'—';
-    let remChip='';
-    if(rem!==null){
-      if(rem<=0)remChip=`<div class="chip danger"><small>Süre</small><strong>Doldu!</strong></div>`;
-      else if(rem<=2)remChip=`<div class="chip warn"><small>Kalan</small><strong>${rem} gün ⚠️</strong></div>`;
-      else remChip=`<div class="chip"><small>Kalan</small><strong>${rem} gün</strong></div>`;
+    const r=remDays(s.startDate,s.days);
+    const ed=s.startDate&&s.days?new Date(new Date(s.startDate).getTime()+s.days*86400000).toLocaleDateString('tr-TR'):'—';
+    let rc='';
+    if(r!==null){
+      if(r<=0)rc=`<div class="chip d"><small>Süre</small><strong>Doldu!</strong></div>`;
+      else if(r<=2)rc=`<div class="chip w"><small>Kalan</small><strong>${r} gün ⚠️</strong></div>`;
+      else rc=`<div class="chip"><small>Kalan</small><strong>${r} gün</strong></div>`;
     }
     const cid=ciftId(id);
-    const isCift=s.tip==='cift'&&ciftGecerli(id);
+    const isCift=s.tip==='cift'&&ciftOk(id)&&state[cid-1].busy&&state[cid-1].grup===s.grup&&s.grup;
     body.innerHTML=`
-      <div class="info-chips">
+      <div class="chips">
         <div class="chip"><small>Misafir</small><strong>${esc(s.name||'—')}</strong></div>
-        ${s.tip?`<div class="chip ${isCift?'purple':''}"><small>Rezerve tipi</small><strong>${isCift?'👫 Çift (#'+cid+')':'👤 Tek'}</strong></div>`:''}
+        ${s.tip?`<div class="chip ${isCift?'v':''}"><small>Tip</small><strong>${isCift?'👫 Çift (#'+cid+')':'👤 Tek'}</strong></div>`:''}
         ${s.phone?`<div class="chip"><small>Tel</small><strong>${esc(s.phone)}</strong></div>`:''}
         ${s.time?`<div class="chip"><small>Giriş</small><strong>${esc(s.time)}</strong></div>`:''}
         ${s.startDate?`<div class="chip"><small>Başlangıç</small><strong>${new Date(s.startDate).toLocaleDateString('tr-TR')}</strong></div>`:''}
         ${s.days?`<div class="chip"><small>Toplam</small><strong>${s.days} gün</strong></div>`:''}
-        ${s.days?`<div class="chip"><small>Bitiş</small><strong>${endDate}</strong></div>`:''}
-        ${remChip}
-        ${s.personel?`<div class="chip blue"><small>Kaydeden</small><strong>👤 ${esc(s.personel)}</strong></div>`:''}
+        ${s.days?`<div class="chip"><small>Bitiş</small><strong>${ed}</strong></div>`:''}
+        ${rc}
+        ${s.personel?`<div class="chip b"><small>Kaydeden</small><strong>👤 ${esc(s.personel)}</strong></div>`:''}
       </div>
-      ${s.note?`<div class="note-box">📝 ${esc(s.note)}</div>`:''}
-      <div class="btn-row">
-        <button class="btn red" onclick="release(${id})">${isCift?'👫 İkisini Boşalt':'Boşalt'}</button>
-        <button class="btn gray" onclick="editModal(${id})">Düzenle</button>
+      ${s.note?`<div class="nbox">📝 ${esc(s.note)}</div>`:''}
+      <div class="brow">
+        <button class="btn r" onclick="release(${id})">${isCift?'👫 İkisini Boşalt':'Boşalt'}</button>
+        <button class="btn gr" onclick="editMo(${id})">Düzenle</button>
       </div>`;
   }
-  document.getElementById('modal-overlay').className='modal-overlay open';
+  document.getElementById('mo').className='mo open';
 }
 
-function editModal(id){
+function editMo(id){
   const s=state[id-1];
-  document.getElementById('modal-body').innerHTML=`
+  document.getElementById('mo-body').innerHTML=`
     <label class="fl">Misafir adı *</label>
     <input class="fi" type="text" id="f-name" value="${esc(s.name)}" maxlength="60">
     <label class="fl">Telefon</label>
     <input class="fi" type="tel" id="f-phone" value="${esc(s.phone)}">
-    <div class="form-row">
+    <div class="fr">
       <div><label class="fl">Başlangıç tarihi</label>
-      <input class="fi" type="date" id="f-startDate" value="${s.startDate||today()}"></div>
+      <input class="fi" type="date" id="f-sd" value="${s.startDate||today()}"></div>
       <div><label class="fl">Kaç gün?</label>
       <input class="fi" type="number" id="f-days" value="${s.days||''}" min="1" max="365"></div>
     </div>
     <label class="fl">Not</label>
     <textarea class="fi" id="f-note">${esc(s.note)}</textarea>
-    <div style="background:#eff6ff;border-radius:8px;padding:8px 10px;font-size:12px;color:#1d4ed8;margin-bottom:12px">
-      👤 Düzenleyen: <strong>${esc(aktifPersonel)}</strong>
-    </div>
-    <div class="btn-row">
-      <button class="btn green" onclick="saveEdit(${id})">💾 Kaydet</button>
-      <button class="btn gray" onclick="openModal(${id})">İptal</button>
+    <div class="pinfo">👤 Düzenleyen: <strong>${esc(aktif)}</strong></div>
+    <div class="brow">
+      <button class="btn g" onclick="saveEdit(${id})">💾 Kaydet</button>
+      <button class="btn gr" onclick="openMo(${id})">İptal</button>
     </div>`;
 }
 
-function closeModal(){document.getElementById('modal-overlay').className='modal-overlay';}
-function overlayClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+function closeMo(){document.getElementById('mo').className='mo';}
+function moClick(e){if(e.target===document.getElementById('mo'))closeMo();}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function makeRec(id,name,phone,note,startDate,days,tip,grup){
+function mkRec(id,name,phone,note,sd,days,tip,grup){
   return{id,busy:true,name,phone,note,
     time:new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}),
-    startDate,days,personel:aktifPersonel,
-    tarih:new Date().toLocaleDateString('tr-TR'),
-    tip,ciftGrup:grup};
+    startDate:sd,days,personel:aktif,
+    tarih:new Date().toLocaleDateString('tr-TR'),tip,grup};
 }
 
 function reserve(id){
@@ -416,38 +463,32 @@ function reserve(id){
   if(!name){alert('Misafir adı zorunlu!');return;}
   const phone=document.getElementById('f-phone').value.trim();
   const note=document.getElementById('f-note').value.trim();
-  const startDate=document.getElementById('f-startDate').value;
+  const sd=document.getElementById('f-sd').value;
   const days=parseInt(document.getElementById('f-days').value)||0;
   const tip=document.getElementById('f-tip').value;
   const cid=ciftId(id);
   const grup=tip==='cift'?('g'+Date.now()):'';
-
-  const rec=makeRec(id,name,phone,note,startDate,days,tip,grup);
-  state[id-1]=rec;updateDB(id,rec);
-
-  if(tip==='cift'&&ciftGecerli(id)&&!state[cid-1].busy){
-    const rec2=makeRec(cid,name,phone,note,startDate,days,'cift',grup);
-    state[cid-1]=rec2;updateDB(cid,rec2);
+  const rec=mkRec(id,name,phone,note,sd,days,tip,grup);
+  state[id-1]=rec;upDB(id,rec);
+  if(tip==='cift'&&ciftOk(id)&&!state[cid-1].busy){
+    const rec2=mkRec(cid,name,phone,note,sd,days,'cift',grup);
+    state[cid-1]=rec2;upDB(cid,rec2);
     toast('✅ #'+id+' ve #'+cid+' rezerve (çift) — '+name);
   } else {
     toast('✅ #'+id+' rezerve — '+name+(days?' ('+days+' gün)':''));
   }
-  renderGrid();updateStats();closeModal();
+  renderGrid();updateStats();closeMo();
 }
 
 function release(id){
   const s=state[id-1];
   const cid=ciftId(id);
-  const isCift=s.tip==='cift'&&ciftGecerli(id)&&state[cid-1].busy&&state[cid-1].ciftGrup===s.ciftGrup&&s.ciftGrup;
-
-  const msg=isCift?`#${id} ve #${cid} şezlong (çift) boşaltılsın mı?`:`#${id} numaralı şezlong boşaltılsın mı?`;
-  if(!confirm(msg))return;
-
-  const empty=(xid)=>({id:xid,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',ciftGrup:''});
-  state[id-1]=empty(id);updateDB(id,state[id-1]);
-  if(isCift){state[cid-1]=empty(cid);updateDB(cid,state[cid-1]);}
-
-  renderGrid();updateStats();closeModal();
+  const isCift=s.tip==='cift'&&ciftOk(id)&&state[cid-1].busy&&state[cid-1].grup===s.grup&&s.grup;
+  if(!confirm(isCift?`#${id} ve #${cid} şezlong boşaltılsın mı?`:`#${id} şezlong boşaltılsın mı?`))return;
+  const em=(xid)=>({id:xid,busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',grup:''});
+  state[id-1]=em(id);upDB(id,state[id-1]);
+  if(isCift){state[cid-1]=em(cid);upDB(cid,state[cid-1]);}
+  renderGrid();updateStats();closeMo();
   toast(isCift?`🟢 #${id} ve #${cid} boşaltıldı`:`🟢 #${id} boşaltıldı`);
 }
 
@@ -457,36 +498,33 @@ function saveEdit(id){
   const s=state[id-1];
   s.name=name;s.phone=document.getElementById('f-phone').value.trim();
   s.note=document.getElementById('f-note').value.trim();
-  s.startDate=document.getElementById('f-startDate').value;
+  s.startDate=document.getElementById('f-sd').value;
   s.days=parseInt(document.getElementById('f-days').value)||0;
-  s.personel=aktifPersonel;s.tarih=new Date().toLocaleDateString('tr-TR');
-  updateDB(id,s);renderGrid();updateStats();closeModal();
+  s.personel=aktif;s.tarih=new Date().toLocaleDateString('tr-TR');
+  upDB(id,s);renderGrid();updateStats();closeMo();
   toast('💾 #'+id+' güncellendi');
 }
 
 function doSearch(v){
   searchVal=v;renderGrid();
-  if(v){const m=state.find(s=>s.name.toLowerCase().includes(v.toLowerCase()));if(m)openModal(m.id);}
+  if(v){const m=state.find(s=>s.name.toLowerCase().includes(v.toLowerCase()));if(m)openMo(m.id);}
 }
 function clearSearch(){document.getElementById('search').value='';searchVal='';renderGrid();}
 
 function resetDay(){
   const gunluk=state.filter(s=>s.busy&&!s.days);
-  const suresiDolan=state.filter(s=>s.busy&&s.days&&remainingDays(s.startDate,s.days)<=0);
-  const aktif=state.filter(s=>s.busy&&s.days&&remainingDays(s.startDate,s.days)>0);
-  let msg=`GÜN SONU İŞLEMİ\n\n`;
-  msg+=`✅ Günlük rezerve (temizlenecek): ${gunluk.length} şezlong\n`;
-  msg+=`⏰ Süresi dolmuş (temizlenecek): ${suresiDolan.length} şezlong\n`;
-  msg+=`🔒 Aktif rezerve (dokunulmayacak): ${aktif.length} şezlong\n\nDevam edilsin mi?`;
+  const biten=state.filter(s=>s.busy&&s.days&&remDays(s.startDate,s.days)<=0);
+  const aktifR=state.filter(s=>s.busy&&s.days&&remDays(s.startDate,s.days)>0);
+  const msg=`GÜN SONU İŞLEMİ\n\n✅ Günlük rezerve (temizlenecek): ${gunluk.length}\n⏰ Süresi dolmuş (temizlenecek): ${biten.length}\n🔒 Aktif rezerve (korunacak): ${aktifR.length}\n\nDevam edilsin mi?`;
   if(!confirm(msg))return;
-  const temizlenecek=[...gunluk,...suresiDolan];
-  if(temizlenecek.length===0){toast('Temizlenecek şezlong yok.');return;}
-  temizlenecek.forEach(s=>{
-    s.busy=false;s.name='';s.phone='';s.note='';s.time='';s.startDate='';s.days=0;s.personel='';s.tarih='';s.tip='';s.ciftGrup='';
-    updateDB(s.id,s);
+  const tmz=[...gunluk,...biten];
+  if(!tmz.length){toast('Temizlenecek şezlong yok.');return;}
+  tmz.forEach(s=>{
+    Object.assign(s,{busy:false,name:'',phone:'',note:'',time:'',startDate:'',days:0,personel:'',tarih:'',tip:'',grup:''});
+    upDB(s.id,s);
   });
-  renderGrid();updateStats();closeModal();
-  toast(`🔄 ${temizlenecek.length} temizlendi, ${aktif.length} rezerve korundu`);
+  renderGrid();updateStats();closeMo();
+  toast(`🔄 ${tmz.length} temizlendi, ${aktifR.length} rezerve korundu`);
 }
 
 function toast(msg){
@@ -495,8 +533,8 @@ function toast(msg){
   clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2800);
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-window.addEventListener('load',renderPersonelList);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMo();});
+window.addEventListener('load',renderGiris);
 </script>
 </body>
 </html>
